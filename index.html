@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Evermind™ — Every detail brings intelligence</title>
+  <meta name="description" content="A Webflow template crafted for forward-thinking companies and businesses who value clarity, warmth, and adaptability.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='28' font-size='28'>🌿</text></svg>">
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-container">
+      <a href="/" class="nav-logo">
+        <svg class="logo-icon" width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z" fill="currentColor"/>
+        </svg>
+        <span>Evermind</span>
+      </a>
+      <div class="nav-links">
+        <a href="#" class="nav-link">Overview</a>
+        <div class="nav-dropdown">
+          <button class="nav-link nav-dropdown-toggle">Multi-Layout <svg width="10" height="6" viewBox="0 0 10 6"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" fill="none"/></svg></button>
+          <div class="dropdown-menu mega-dropdown">
+            <div class="mega-dropdown-inner">
+              <div class="mega-col">
+                <h4 class="mega-heading">Homepages</h4>
+                <a href="#" class="mega-link">
+                  <span class="mega-link-title">Home A — Structure</span>
+                  <span class="mega-link-desc">Calm structure for fresh ideas and first impressions.</span>
+                </a>
+                <a href="#" class="mega-link">
+                  <span class="mega-link-title">Home B — Depth</span>
+                  <span class="mega-link-desc">Clarity through details, made for showcasing work and depth.</span>
+                </a>
+                <a href="#" class="mega-link">
+                  <span class="mega-link-title">Home C — Scale</span>
+                  <span class="mega-link-desc">Crafted to scale with purpose-driven infrastructure projects.</span>
+                </a>
+              </div>
+              <div class="mega-col">
+                <h4 class="mega-heading">About</h4>
+                <a href="#" class="mega-link">
+                  <span class="mega-link-title">About A — People</span>
+                  <span class="mega-link-desc">Faces and roles behind the projects and partnerships.</span>
+                </a>
+                <a href="#" class="mega-link">
+                  <span class="mega-link-title">About B — Timeline</span>
+                  <span class="mega-link-desc">A quiet look at the milestones that shaped Evermind.</span>
+                </a>
+                <a href="#" class="mega-link">
+                  <span class="mega-link-title">About C — Values</span>
+                  <span class="mega-link-desc">How we think, work, and approach sustainable design.</span>
+                </a>
+              </div>
+              <div class="mega-col">
+                <h4 class="mega-heading">Contact</h4>
+                <a href="#" class="mega-link">
+                  <span class="mega-link-title">Contact A — Grounded</span>
+                  <span class="mega-link-desc">For honest questions and steady collaborations.</span>
+                </a>
+                <a href="#" class="mega-link">
+                  <span class="mega-link-title">Contact B — Open</span>
+                  <span class="mega-link-desc">Just say hi. We're always curious to hear what you're building.</span>
+                </a>
+                <a href="#" class="mega-link">
+                  <span class="mega-link-title">Contact C — In Touch</span>
+                  <span class="mega-link-desc">Clearly outline your services in a modular way.</span>
+                </a>
+              </div>
+              <div class="mega-col">
+                <h4 class="mega-heading">Pages</h4>
+                <a href="#" class="mega-link">
+                  <span class="mega-link-title">Service</span>
+                  <span class="mega-link-desc">Clearly outline your services in a modular way.</span>
+                </a>
+                <a href="#" class="mega-link">
+                  <span class="mega-link-title">Customer Stories</span>
+                  <span class="mega-link-desc">A highly advanced CMS setup for showcasing case studies.</span>
+                </a>
+                <a href="#" class="mega-link">
+                  <span class="mega-link-title">Pricing</span>
+                  <span class="mega-link-desc">Help visitors quickly understand your offer.</span>
+                </a>
+                <a href="#" class="mega-link">
+                  <span class="mega-link-title">Blog</span>
+                  <span class="mega-link-desc">Position yourself as a thought leader and boost SEO.</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <a href="#" class="nav-link">Pages</a>
+      </div>
+      <div class="nav-right">
+        <a href="#" class="btn btn-primary btn-sm">Buy Template</a>
+        <button class="mobile-menu-toggle" aria-label="Toggle menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Mobile Menu -->
+  <div class="mobile-menu" id="mobileMenu">
+    <div class="mobile-menu-inner">
+      <a href="#" class="mobile-link">Overview</a>
+      <a href="#" class="mobile-link">Home A</a>
+      <a href="#" class="mobile-link">Home B</a>
+      <a href="#" class="mobile-link">Home C</a>
+      <a href="#" class="mobile-link">About</a>
+      <a href="#" class="mobile-link">Contact</a>
+      <a href="#" class="mobile-link">Service</a>
+      <a href="#" class="mobile-link">Customer Stories</a>
+      <a href="#" class="mobile-link">Pricing</a>
+      <a href="#" class="mobile-link">Blog</a>
+      <a href="#" class="btn btn-primary" style="margin-top: 1rem;">Buy Template</a>
+    </div>
+  </div>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero-content">
+        <span class="hero-label">The sustainable design system for Webflow</span>
+        <h1 class="hero-title">Every detail brings<br>intelligence</h1>
+        <p class="hero-subtitle">A Webflow template crafted for forward-thinking companies and businesses who value clarity, warmth, and adaptability.</p>
+        <div class="hero-buttons">
+          <a href="#" class="btn btn-primary">Buy Template</a>
+          <a href="#" class="btn btn-outline">Book a call</a>
+        </div>
+      </div>
+      <div class="hero-images">
+        <div class="hero-grid">
+          <div class="hero-grid-col hero-grid-col-left">
+            <div class="hero-img-card hero-img-1">
+              <img src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=600&h=400&fit=crop" alt="Green agricultural field aerial view">
+            </div>
+            <div class="hero-widget hero-widget-consult">
+              <div class="widget-dot"></div>
+              <span>Free eco-consultation</span>
+              <span class="widget-arrow">&#8599;</span>
+            </div>
+          </div>
+          <div class="hero-grid-col hero-grid-col-center">
+            <div class="hero-img-card hero-img-2">
+              <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=600&h=800&fit=crop" alt="Aerial view of forest landscape">
+            </div>
+          </div>
+          <div class="hero-grid-col hero-grid-col-right">
+            <div class="hero-img-card hero-img-3">
+              <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=600&h=300&fit=crop" alt="Modern sustainable architecture">
+            </div>
+            <div class="hero-img-card hero-img-4">
+              <img src="https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=600&h=300&fit=crop" alt="Green forest canopy view">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Intro Section -->
+  <section class="intro-section">
+    <div class="container">
+      <div class="intro-grid">
+        <div class="intro-text">
+          <p class="intro-paragraph">Evermind&trade; isn&rsquo;t just pages, it&rsquo;s a calm system for your brand story. With modular layouts and smooth, nature-inspired interactions, every detail brings <strong>intelligence</strong>, <strong>lightness</strong>, and <strong>flow</strong>.</p>
+        </div>
+        <div class="intro-images">
+          <div class="intro-img-wrapper">
+            <img src="https://images.unsplash.com/photo-1473773508845-188df298d2d1?w=500&h=350&fit=crop" alt="Aerial coastal landscape">
+          </div>
+          <div class="intro-img-wrapper">
+            <img src="https://images.unsplash.com/photo-1586348943529-beaae6c28db9?w=500&h=350&fit=crop" alt="Woman in sustainable environment">
+          </div>
+        </div>
+      </div>
+      <div class="intro-description">
+        <p>Evermind&trade; may look like a Brussels-based eco consultancy, but let&rsquo;s be real &mdash; this is a Webflow template. Just like we&rsquo;d design a power plant with precision and European standards, we&rsquo;ve built this system with variables, modular layouts, and pixel-perfect details.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Capabilities / Features Section -->
+  <section class="capabilities-section" id="capabilities">
+    <div class="container">
+      <div class="capabilities-grid">
+        <div class="capabilities-sidebar">
+          <span class="section-label">CAPABILITIES</span>
+          <h2 class="capabilities-title">Every section, variable, and interaction is designed to create a calm, future-proof foundation for brands that value clarity and durability</h2>
+          <div class="capabilities-nav">
+            <button class="cap-nav-item active" data-index="0">
+              <span class="cap-nav-num">uno</span>
+              <span class="cap-nav-text">Eco Frameworks</span>
+            </button>
+            <button class="cap-nav-item" data-index="1">
+              <span class="cap-nav-num">Duo</span>
+              <span class="cap-nav-text">Green CMS Engine</span>
+            </button>
+            <button class="cap-nav-item" data-index="2">
+              <span class="cap-nav-num">rike</span>
+              <span class="cap-nav-text">Smart, flexible pages</span>
+            </button>
+          </div>
+        </div>
+        <div class="capabilities-content">
+          <!-- Feature Block 1 -->
+          <div class="feature-block" data-index="0">
+            <div class="feature-images">
+              <div class="feature-img-main">
+                <img src="https://images.unsplash.com/photo-1518173946687-a355f78e2ba4?w=700&h=500&fit=crop" alt="Sustainable architecture framework">
+              </div>
+              <div class="feature-img-secondary">
+                <img src="https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=400&h=300&fit=crop" alt="Green eco design">
+              </div>
+            </div>
+            <div class="feature-info">
+              <h3 class="feature-heading">Frameworks built like modern eco-architecture.</h3>
+              <p class="feature-text">Evermind&trade; delivers a modular foundation engineered for long-term stability. With pixel-perfect layouts and a calm design system, it&rsquo;s built to evolve just like sustainable infrastructure.</p>
+            </div>
+          </div>
+          <!-- Feature Block 2 -->
+          <div class="feature-block" data-index="1">
+            <div class="feature-images">
+              <div class="feature-img-main">
+                <img src="https://images.unsplash.com/photo-1497436072909-60f360e1d4b1?w=700&h=500&fit=crop" alt="Content flows like renewable energy">
+              </div>
+              <div class="feature-img-secondary">
+                <img src="https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?w=400&h=300&fit=crop" alt="Green CMS design">
+              </div>
+            </div>
+            <div class="feature-info">
+              <h3 class="feature-heading">Content flows like renewable energy.</h3>
+              <p class="feature-text">A CMS that powers blogs, case studies, and brand storytelling with zero friction. Designed for efficiency, scalability, and clean data architecture &mdash; ready to grow with your brand.</p>
+            </div>
+          </div>
+          <!-- Feature Block 3 -->
+          <div class="feature-block" data-index="2">
+            <div class="feature-images">
+              <div class="feature-img-main">
+                <img src="https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=700&h=500&fit=crop" alt="Smart flexible pages">
+              </div>
+              <div class="feature-img-secondary">
+                <div class="feature-stat-card">
+                  <span class="feature-stat-number">85%</span>
+                  <span class="feature-stat-label">Client satisfaction rate</span>
+                </div>
+              </div>
+            </div>
+            <div class="feature-info">
+              <h3 class="feature-heading">Convert it into the renewable energy.</h3>
+              <p class="feature-text">Smart, flexible pages that adapt to your content. Each section is built with precision, making every pixel count toward your brand&rsquo;s sustainable growth story.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Design Integrity Section -->
+  <section class="integrity-section">
+    <div class="container">
+      <div class="integrity-content">
+        <h2 class="integrity-title">Every pixel, every component, every flow is built to give you clarity, adaptability, and long-term design integrity</h2>
+        <div class="integrity-links">
+          <a href="#" class="integrity-link">About us <span>&#8599;</span></a>
+          <a href="#" class="integrity-link">Evermind template <span>&#8599;</span></a>
+        </div>
+      </div>
+      <div class="integrity-stats">
+        <div class="stat-item">
+          <span class="stat-number">50+</span>
+          <span class="stat-desc">Pre-built sections and layouts</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">1500+</span>
+          <span class="stat-desc">Happy creators using BYQ templates</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Divider -->
+  <div class="section-divider"><div class="container"><hr></div></div>
+
+  <!-- System Section -->
+  <section class="system-section">
+    <div class="container">
+      <div class="system-header">
+        <span class="section-label">EVERMIND SYSTEM</span>
+        <h2 class="system-title">A system shaped like sustainable projects.</h2>
+      </div>
+      <div class="system-cards">
+        <div class="system-card">
+          <div class="system-card-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+              <polyline points="9,22 9,12 15,12 15,22"/>
+            </svg>
+          </div>
+          <h3 class="system-card-title">Green Architecture</h3>
+          <p class="system-card-text">Evermind&trade; template is crafted like sustainable structures &mdash; clean, scalable, and built to last.</p>
+        </div>
+        <div class="system-card">
+          <div class="system-card-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <circle cx="12" cy="12" r="3"/>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+            </svg>
+          </div>
+          <h3 class="system-card-title">Precision Engineering</h3>
+          <p class="system-card-text">Every layout and component is tuned with variables and pixel-perfect details, so your brand stands on solid ground.</p>
+        </div>
+        <div class="system-card">
+          <div class="system-card-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+            </svg>
+          </div>
+          <h3 class="system-card-title">Dynamic Interactions</h3>
+          <p class="system-card-text">From nature-inspired transitions to fluid page structures, Evermind&trade; feels alive yet quietly sophisticated.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Divider -->
+  <div class="section-divider"><div class="container"><hr></div></div>
+
+  <!-- Success Stories Section -->
+  <section class="stories-section" id="stories">
+    <div class="container">
+      <div class="stories-header">
+        <span class="section-label">CUSTOMER STORIES</span>
+        <div class="stories-header-row">
+          <h2 class="stories-title">Success stories</h2>
+          <a href="#" class="btn btn-outline btn-sm">Show all</a>
+        </div>
+      </div>
+      <div class="stories-grid">
+        <!-- Story 1 - Strobe -->
+        <div class="story-card story-card-large">
+          <div class="story-image">
+            <img src="https://images.unsplash.com/photo-1560179707-f14e90ef3623?w=800&h=500&fit=crop" alt="Strobe office">
+          </div>
+          <div class="story-content">
+            <div class="story-meta">
+              <span class="story-company">Strobe</span>
+              <span class="story-author">Ricky Martin, Founder</span>
+            </div>
+            <blockquote class="story-quote">&ldquo;Working with them felt like being heard, then gently guided toward clarity&rdquo;</blockquote>
+            <div class="story-stat">
+              <span class="story-stat-number">72%</span>
+              <span class="story-stat-label">Longer average session duration</span>
+            </div>
+            <a href="#" class="story-link">Read case study <span>&#8599;</span></a>
+          </div>
+        </div>
+        <!-- Story 2 - &Fold -->
+        <div class="story-card">
+          <div class="story-image">
+            <img src="https://images.unsplash.com/photo-1497366811353-6870744d04b2?w=600&h=400&fit=crop" alt="&Fold workspace">
+          </div>
+          <div class="story-content">
+            <div class="story-meta">
+              <span class="story-company">&amp;Fold</span>
+              <span class="story-author">Janina Kowalska, Founder</span>
+            </div>
+            <blockquote class="story-quote">&ldquo;It felt like Evermind understood the project before we even finished explaining it.&rdquo;</blockquote>
+            <div class="story-stat">
+              <span class="story-stat-number">8x</span>
+              <span class="story-stat-label">Increase in demo requests</span>
+            </div>
+            <a href="#" class="story-link">Read case study <span>&#8599;</span></a>
+          </div>
+        </div>
+        <!-- Story 3 - For:Human -->
+        <div class="story-card">
+          <div class="story-image">
+            <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=600&h=400&fit=crop" alt="For:Human team">
+          </div>
+          <div class="story-content">
+            <div class="story-meta">
+              <span class="story-company">For:Human</span>
+              <span class="story-author">Alan &amp; Jessica Mercedes, Founders</span>
+            </div>
+            <blockquote class="story-quote">&ldquo;They didn&rsquo;t just consult &mdash; they co-created. Every meeting left us lighter.&rdquo;</blockquote>
+            <div class="story-stat">
+              <span class="story-stat-number">28%</span>
+              <span class="story-stat-label">Longer client retention</span>
+            </div>
+            <a href="#" class="story-link">Read case study <span>&#8599;</span></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- From Idea to Success Section -->
+  <section class="idea-section">
+    <div class="container">
+      <div class="idea-content">
+        <div class="idea-left">
+          <h2 class="idea-title">From idea to<br>sustainable success</h2>
+          <div class="idea-case">
+            <a href="#" class="idea-case-link">See how we helped FRANCO <span>&#8599;</span></a>
+          </div>
+        </div>
+        <div class="idea-right">
+          <div class="idea-quote-card">
+            <div class="idea-quote-images">
+              <img src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=300&h=300&fit=crop" alt="Team member" class="idea-quote-img">
+              <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=300&h=300&fit=crop" alt="Team member" class="idea-quote-img">
+            </div>
+            <blockquote class="idea-quote-text">&ldquo;They didn&rsquo;t just consult &mdash; they co-created. Every meeting left us lighter.&rdquo;</blockquote>
+          </div>
+          <div class="idea-stat-card">
+            <span class="idea-stat-number">28%</span>
+            <span class="idea-stat-label">Longer client retention</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact Section -->
+  <section class="contact-section" id="contact">
+    <div class="container">
+      <div class="contact-grid">
+        <!-- Left: Consultation Form -->
+        <div class="contact-left">
+          <h2 class="contact-title">Ready to build something sustainable?</h2>
+          <p class="contact-subtitle">Whether you need a brand refresh or a complete digital overhaul, let&rsquo;s explore how Evermind&trade; can help.</p>
+          <form class="form consultation-form" id="consultationForm">
+            <div class="form-group">
+              <label class="form-label" for="consult-name">Full Name</label>
+              <input type="text" id="consult-name" class="form-input" placeholder="Your full name" required>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label" for="consult-phone">Phone</label>
+                <input type="tel" id="consult-phone" class="form-input" placeholder="Your phone number">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="consult-time">Preferred time</label>
+                <select id="consult-time" class="form-input form-select">
+                  <option value="">Choose</option>
+                  <option value="morning">Morning</option>
+                  <option value="afternoon">Afternoon</option>
+                  <option value="evening">Evening</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="consult-email">Email</label>
+              <input type="email" id="consult-email" class="form-input" placeholder="Your email address" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="consult-note">Optional note</label>
+              <textarea id="consult-note" class="form-input form-textarea" placeholder="Tell us about your project..." rows="3"></textarea>
+            </div>
+            <div class="form-group form-checkbox-group">
+              <label class="form-checkbox">
+                <input type="checkbox" required>
+                <span class="checkmark"></span>
+                <span>I allow Evermind&trade; to store my details for communication.</span>
+              </label>
+            </div>
+            <button type="submit" class="btn btn-primary btn-full">Book a call</button>
+            <p class="form-note">We&rsquo;ll confirm your time via email within 24 hours. Calls are free and non-binding.</p>
+          </form>
+          <!-- Agent Card -->
+          <div class="agent-card">
+            <img src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=100&h=100&fit=crop&crop=face" alt="Jessica Mercedes" class="agent-img">
+            <div class="agent-info">
+              <span class="agent-name">Jessica Mercedes</span>
+              <span class="agent-role">Head of Support</span>
+            </div>
+          </div>
+        </div>
+        <!-- Right: Contact Form -->
+        <div class="contact-right">
+          <div class="contact-right-header">
+            <span class="section-label">LET&rsquo;S TALK</span>
+            <h3 class="contact-right-title">Got a project in mind?<br>Let&rsquo;s start with a hello.</h3>
+          </div>
+          <form class="form contact-form" id="contactForm">
+            <div class="form-group">
+              <label class="form-label" for="contact-name">Full Name</label>
+              <input type="text" id="contact-name" class="form-input" placeholder="Your full name" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="contact-email">Email</label>
+              <input type="email" id="contact-email" class="form-input" placeholder="Your email address" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="contact-budget">Budget Range</label>
+              <select id="contact-budget" class="form-input form-select">
+                <option value="">Select a range</option>
+                <option value="5k-10k">$5,000 - $10,000</option>
+                <option value="10k-25k">$10,000 - $25,000</option>
+                <option value="25k+">$25,000+</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="contact-message">Message</label>
+              <textarea id="contact-message" class="form-input form-textarea" placeholder="Tell us about your project..." rows="4" required></textarea>
+            </div>
+            <div class="form-group form-checkbox-group">
+              <label class="form-checkbox">
+                <input type="checkbox" required>
+                <span class="checkmark"></span>
+                <span>I allow Evermind&trade; to store my details for communication.</span>
+              </label>
+            </div>
+            <button type="submit" class="btn btn-primary btn-full">Send message</button>
+            <p class="form-note">We&rsquo;ll reply within 24&ndash;48h. By sending, you accept our <a href="#">Privacy Policy</a>.</p>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Banner -->
+  <section class="cta-banner">
+    <div class="container">
+      <div class="cta-content">
+        <span class="cta-label">A modular Webflow template</span>
+        <h2 class="cta-title">Ready to build<br>with Evermind?</h2>
+        <a href="#" class="btn btn-accent">Buy template</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <a href="/" class="footer-logo">
+            <svg class="logo-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z" fill="currentColor"/>
+            </svg>
+            <span>Evermind</span>
+          </a>
+          <p class="footer-desc">A modular Webflow template shaped like sustainable infrastructures &mdash; designed for brands that value clarity, adaptability, and modern aesthetics.</p>
+        </div>
+        <div class="footer-links">
+          <div class="footer-col">
+            <h4 class="footer-heading">Multilayout</h4>
+            <a href="#" class="footer-link">Home A</a>
+            <a href="#" class="footer-link">Home B</a>
+            <a href="#" class="footer-link">Home C</a>
+            <a href="#" class="footer-link">Contact A</a>
+            <a href="#" class="footer-link">Contact B</a>
+            <a href="#" class="footer-link">Contact C</a>
+            <a href="#" class="footer-link">About A</a>
+            <a href="#" class="footer-link">About B</a>
+            <a href="#" class="footer-link">About C</a>
+          </div>
+          <div class="footer-col">
+            <h4 class="footer-heading">Pages</h4>
+            <a href="#" class="footer-link">Service</a>
+            <a href="#" class="footer-link">Blog</a>
+            <a href="#" class="footer-link">Blog Article</a>
+            <a href="#" class="footer-link">Customer Stories</a>
+            <a href="#" class="footer-link">Customer Story</a>
+            <a href="#" class="footer-link">Pricing</a>
+          </div>
+          <div class="footer-col">
+            <h4 class="footer-heading">More</h4>
+            <a href="#" class="footer-link">Legal</a>
+            <a href="#" class="footer-link">404</a>
+            <a href="#" class="footer-link">Password</a>
+            <a href="#" class="footer-link">More Templates</a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div class="footer-bottom-left">
+          <span>&copy; 2025 Built by <a href="https://www.byq.studio/" target="_blank" rel="noopener">BYQ&reg; Studio</a> exclusively for Webflow</span>
+        </div>
+        <div class="footer-bottom-right">
+          <a href="#" class="footer-bottom-link">Legal</a>
+          <a href="#" class="footer-bottom-link">Style Guide</a>
+          <a href="#" class="footer-bottom-link">Changelog</a>
+          <a href="#" class="footer-bottom-link">Licenses</a>
+        </div>
+      </div>
+      <div class="footer-disclaimer">
+        <p>Evermind&trade; is a fictional eco-consulting brand concept, crafted by BYQ Studio as part of the Evermind Webflow template. Any references to companies, projects, or services are purely illustrative. This template is designed for modern brands, agencies, and businesses, offering a modular Webflow framework with a unique eco-inspired aesthetic. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
