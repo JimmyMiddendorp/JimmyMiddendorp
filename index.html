@@ -15,99 +15,67 @@
 
   <!-- ===================== NAVIGATION ===================== -->
   <nav class="navbar" id="navbar">
-    <div class="nav-container">
-      <a href="/" class="nav-logo">
-        <img src="https://cdn.prod.website-files.com/6894a5c18c9035760aabc38b/6899c5bf8d8c193fc7ec8203_Logo.svg" alt="Evermind" class="nav-logo-img">
-      </a>
+    <div class="nav-inner">
+      <div class="nav-container">
+        <a href="/" class="nav-logo">
+          <svg class="nav-logo-icon" width="28" height="28" viewBox="0 0 28 28" fill="none">
+            <circle cx="14" cy="6" r="3" fill="currentColor"/>
+            <circle cx="14" cy="22" r="3" fill="currentColor"/>
+            <circle cx="6" cy="10" r="3" fill="currentColor"/>
+            <circle cx="22" cy="10" r="3" fill="currentColor"/>
+            <circle cx="6" cy="18" r="3" fill="currentColor"/>
+            <circle cx="22" cy="18" r="3" fill="currentColor"/>
+          </svg>
+          <span class="nav-logo-text">Evermind<sup>&trade;</sup></span>
+        </a>
 
-      <div class="nav-links" id="navLinks">
-        <a href="#" class="nav-link">Overview</a>
-
-        <!-- Multi-Layout Dropdown -->
-        <div class="nav-dropdown" id="multiLayoutDropdown">
-          <button class="nav-link nav-dropdown-toggle">
-            Multi-Layout
-            <svg width="10" height="6" viewBox="0 0 10 6" fill="none"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </button>
-          <div class="dropdown-menu mega-dropdown">
-            <div class="mega-dropdown-inner">
-              <div class="mega-col">
-                <h4 class="mega-heading">Homepages</h4>
-                <a href="#" class="mega-link">
-                  <span class="mega-link-title">Home A — Structure</span>
-                  <span class="mega-link-desc">Calm structure for fresh ideas and first impressions.</span>
-                </a>
-                <a href="#" class="mega-link">
-                  <span class="mega-link-title">Home B — Depth</span>
-                  <span class="mega-link-desc">Clarity through details, made for showcasing work and depth.</span>
-                </a>
-                <a href="#" class="mega-link">
-                  <span class="mega-link-title">Home C — Scale</span>
-                  <span class="mega-link-desc">Crafted to scale with purpose-driven infrastructure projects.</span>
-                </a>
-              </div>
-              <div class="mega-col">
-                <h4 class="mega-heading">About</h4>
-                <a href="#" class="mega-link">
-                  <span class="mega-link-title">About A — People</span>
-                  <span class="mega-link-desc">Faces and roles behind the projects and partnerships.</span>
-                </a>
-                <a href="#" class="mega-link">
-                  <span class="mega-link-title">About B — Timeline</span>
-                  <span class="mega-link-desc">A quiet look at the milestones that shaped Evermind.</span>
-                </a>
-                <a href="#" class="mega-link">
-                  <span class="mega-link-title">About C — Values</span>
-                  <span class="mega-link-desc">How we think, work, and approach sustainable design.</span>
-                </a>
-              </div>
-              <div class="mega-col">
-                <h4 class="mega-heading">Contact</h4>
-                <a href="#" class="mega-link">
-                  <span class="mega-link-title">Contact A — Grounded</span>
-                  <span class="mega-link-desc">For honest questions and steady collaborations.</span>
-                </a>
-                <a href="#" class="mega-link">
-                  <span class="mega-link-title">Contact B — Open</span>
-                  <span class="mega-link-desc">Just say hi. We're always curious to hear what you're building.</span>
-                </a>
-                <a href="#" class="mega-link">
-                  <span class="mega-link-title">Contact C — In Touch</span>
-                  <span class="mega-link-desc">Built for thoughtful conversations and project clarity.</span>
-                </a>
-              </div>
-              <div class="mega-col">
-                <h4 class="mega-heading">Pages</h4>
-                <a href="#" class="mega-link">
-                  <span class="mega-link-title">Service</span>
-                  <span class="mega-link-desc">Clearly outline your services in a modular way.</span>
-                </a>
-                <a href="#" class="mega-link">
-                  <span class="mega-link-title">Customer Stories</span>
-                  <span class="mega-link-desc">A highly advanced CMS setup for showcasing case studies.</span>
-                </a>
-                <a href="#" class="mega-link">
-                  <span class="mega-link-title">Pricing</span>
-                  <span class="mega-link-desc">Help visitors quickly understand your offer.</span>
-                </a>
-                <a href="#" class="mega-link">
-                  <span class="mega-link-title">Blog</span>
-                  <span class="mega-link-desc">Position yourself as a thought leader and boost SEO.</span>
-                </a>
+        <div class="nav-links" id="navLinks">
+          <a href="#" class="nav-link">Overview</a>
+          <div class="nav-dropdown" id="multiLayoutDropdown">
+            <button class="nav-link nav-dropdown-toggle">
+              Multi-Layout
+              <svg width="10" height="6" viewBox="0 0 10 6" fill="none"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="dropdown-menu mega-dropdown">
+              <div class="mega-dropdown-inner">
+                <div class="mega-col">
+                  <h4 class="mega-heading">Homepages</h4>
+                  <a href="#" class="mega-link"><span class="mega-link-title">Home A — Structure</span><span class="mega-link-desc">Calm structure for fresh ideas and first impressions.</span></a>
+                  <a href="#" class="mega-link"><span class="mega-link-title">Home B — Depth</span><span class="mega-link-desc">Clarity through details, made for showcasing work and depth.</span></a>
+                  <a href="#" class="mega-link"><span class="mega-link-title">Home C — Scale</span><span class="mega-link-desc">Crafted to scale with purpose-driven infrastructure projects.</span></a>
+                </div>
+                <div class="mega-col">
+                  <h4 class="mega-heading">About</h4>
+                  <a href="#" class="mega-link"><span class="mega-link-title">About A — People</span><span class="mega-link-desc">Faces and roles behind the projects and partnerships.</span></a>
+                  <a href="#" class="mega-link"><span class="mega-link-title">About B — Timeline</span><span class="mega-link-desc">A quiet look at the milestones that shaped Evermind.</span></a>
+                  <a href="#" class="mega-link"><span class="mega-link-title">About C — Values</span><span class="mega-link-desc">How we think, work, and approach sustainable design.</span></a>
+                </div>
+                <div class="mega-col">
+                  <h4 class="mega-heading">Contact</h4>
+                  <a href="#" class="mega-link"><span class="mega-link-title">Contact A — Grounded</span><span class="mega-link-desc">For honest questions and steady collaborations.</span></a>
+                  <a href="#" class="mega-link"><span class="mega-link-title">Contact B — Open</span><span class="mega-link-desc">Just say hi. We're always curious to hear what you're building.</span></a>
+                  <a href="#" class="mega-link"><span class="mega-link-title">Contact C — In Touch</span><span class="mega-link-desc">Built for thoughtful conversations and project clarity.</span></a>
+                </div>
+                <div class="mega-col">
+                  <h4 class="mega-heading">Pages</h4>
+                  <a href="#" class="mega-link"><span class="mega-link-title">Service</span><span class="mega-link-desc">Clearly outline your services in a modular way.</span></a>
+                  <a href="#" class="mega-link"><span class="mega-link-title">Customer Stories</span><span class="mega-link-desc">A highly advanced CMS setup for showcasing case studies.</span></a>
+                  <a href="#" class="mega-link"><span class="mega-link-title">Pricing</span><span class="mega-link-desc">Help visitors quickly understand your offer.</span></a>
+                  <a href="#" class="mega-link"><span class="mega-link-title">Blog</span><span class="mega-link-desc">Position yourself as a thought leader and boost SEO.</span></a>
+                </div>
               </div>
             </div>
           </div>
+          <a href="#" class="nav-link">Pages</a>
         </div>
 
-        <a href="#" class="nav-link">Pages</a>
-      </div>
-
-      <div class="nav-right">
-        <a href="#" class="btn btn-primary btn-sm">Buy Template</a>
-        <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Toggle menu">
-          <img src="https://cdn.prod.website-files.com/6894a5c18c9035760aabc38b/689a10f53ea979646de195c4_Icons%20Hamburger%20(1).svg" alt="Menu" class="hamburger-icon">
-          <img src="https://cdn.prod.website-files.com/6894a5c18c9035760aabc38b/689a107f2862ea36439cc2c5_Close.svg" alt="Close" class="close-icon" style="display:none;">
-        </button>
+        <div class="nav-right">
+          <a href="#" class="btn btn-dark btn-sm">Buy template</a>
+          <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Toggle menu">
+            <img src="https://cdn.prod.website-files.com/6894a5c18c9035760aabc38b/689a10f53ea979646de195c4_Icons%20Hamburger%20(1).svg" alt="Menu" class="hamburger-icon">
+            <img src="https://cdn.prod.website-files.com/6894a5c18c9035760aabc38b/689a107f2862ea36439cc2c5_Close.svg" alt="Close" class="close-icon" style="display:none;">
+          </button>
+        </div>
       </div>
     </div>
   </nav>
@@ -129,7 +97,7 @@
       <a href="#" class="mobile-link">Customer Stories</a>
       <a href="#" class="mobile-link">Pricing</a>
       <a href="#" class="mobile-link">Blog</a>
-      <a href="#" class="btn btn-primary" style="margin-top:1rem;width:100%;text-align:center;">Buy Template</a>
+      <a href="#" class="btn btn-dark" style="margin-top:1rem;width:100%;text-align:center;">Buy Template</a>
     </div>
   </div>
 
@@ -138,50 +106,76 @@
     <div class="container">
       <div class="hero-inner">
         <div class="hero-content">
-          <span class="hero-label">The sustainable design system for Webflow</span>
+          <!-- Announcement Banner -->
+          <a href="#" class="hero-announcement">
+            <svg class="hero-announcement-icon" width="18" height="18" viewBox="0 0 28 28" fill="none">
+              <circle cx="14" cy="6" r="2.5" fill="currentColor"/>
+              <circle cx="14" cy="22" r="2.5" fill="currentColor"/>
+              <circle cx="6" cy="10" r="2.5" fill="currentColor"/>
+              <circle cx="22" cy="10" r="2.5" fill="currentColor"/>
+              <circle cx="6" cy="18" r="2.5" fill="currentColor"/>
+              <circle cx="22" cy="18" r="2.5" fill="currentColor"/>
+            </svg>
+            <span>BYQ&reg; Studio celebrates the release of Evermind&trade; template</span>
+            <svg width="7" height="12" viewBox="0 0 7 12" fill="none"><path d="M1 1l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
+
           <h1 class="hero-title">Every detail brings<br>intelligence</h1>
           <p class="hero-subtitle">A Webflow template crafted for forward-thinking companies and businesses who value clarity, warmth, and adaptability.</p>
           <div class="hero-buttons">
             <a href="#" class="btn btn-primary">Buy Template</a>
-            <a href="#" class="btn btn-outline">Book a call</a>
+            <a href="#" class="btn btn-outline btn-book">
+              <img src="https://cdn.prod.website-files.com/6894a5c18c9035760aabc38b/689c5334b6da4fff1b20c366_5aaf33b87d48452a2044d79ef265ab80a8844499.webp" alt="Agent" class="btn-avatar">
+              Book a call
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Hero images - full width -->
+    <div class="hero-images-full">
+      <div class="hero-images-grid">
+        <!-- Left column -->
+        <div class="hero-col hero-col-left">
+          <div class="hero-img-card hero-img-tall">
+            <img src="https://cdn.prod.website-files.com/6894a5c18c9035760aabc38b/689dc9bdb61200eca2aa4210_Image.webp" alt="Sustainable landscape aerial view">
+            <!-- Client story overlay card -->
+            <div class="hero-overlay-card hero-overlay-story">
+              <span class="hero-overlay-label">CLIENT STORY</span>
+              <p class="hero-overlay-text">&ldquo;Evermind helped us from construction blueprints to digital templates&rdquo;</p>
+            </div>
           </div>
         </div>
 
-        <div class="hero-images">
-          <div class="hero-grid">
-            <!-- Left column -->
-            <div class="hero-col hero-col-left">
-              <div class="hero-img-card hero-img-tall">
-                <img src="https://cdn.prod.website-files.com/6894a5c18c9035760aabc38b/689dc9bdb61200eca2aa4210_Image.webp" alt="Sustainable landscape aerial view">
-              </div>
-              <!-- Agent widget -->
-              <div class="hero-agent-widget">
-                <span class="widget-label">Your agent</span>
-                <div class="widget-agent">
-                  <img src="https://cdn.prod.website-files.com/6894a5c18c9035760aabc38b/689c5334b6da4fff1b20c366_5aaf33b87d48452a2044d79ef265ab80a8844499.webp" alt="Jessica Mercedes" class="widget-agent-img">
-                  <div class="widget-agent-info">
-                    <span class="widget-agent-name">Jessica Mercedes</span>
-                    <span class="widget-agent-role">Head of Support</span>
-                  </div>
-                </div>
-                <a href="#contact" class="btn btn-primary btn-sm btn-full">Book a free consultation</a>
-              </div>
-            </div>
+        <!-- Center column -->
+        <div class="hero-col hero-col-center">
+          <div class="hero-img-card hero-img-main">
+            <img src="https://cdn.prod.website-files.com/6894a5c18c9035760aabc38b/689f920b8dc641ef2303bc6c_Feature%20Image.webp" alt="Aerial river landscape">
+          </div>
+        </div>
 
-            <!-- Center column -->
-            <div class="hero-col hero-col-center">
-              <div class="hero-img-card hero-img-main">
-                <img src="https://cdn.prod.website-files.com/6894a5c18c9035760aabc38b/689f920b8dc641ef2303bc6c_Feature%20Image.webp" alt="Sustainable architecture">
+        <!-- Right column -->
+        <div class="hero-col hero-col-right">
+          <div class="hero-img-card hero-img-tall">
+            <img src="https://cdn.prod.website-files.com/6894a5c18c9035760aabc38b/689fb1daa689463f69940460_Tab%20Image.webp" alt="Aerial city view">
+            <!-- Top states overlay widget -->
+            <div class="hero-overlay-card hero-overlay-stats">
+              <span class="hero-overlay-stats-title">Top states</span>
+              <div class="hero-stat-bar">
+                <span class="hero-stat-bar-label">NY</span>
+                <div class="hero-stat-bar-track"><div class="hero-stat-bar-fill" style="width:85%"></div></div>
+                <span class="hero-stat-bar-value">120K</span>
               </div>
-            </div>
-
-            <!-- Right column -->
-            <div class="hero-col hero-col-right">
-              <div class="hero-img-card hero-img-top">
-                <img src="https://cdn.prod.website-files.com/6894a5c18c9035760aabc38b/689fb1daa689463f69940460_Tab%20Image.webp" alt="Modern eco-design">
+              <div class="hero-stat-bar">
+                <span class="hero-stat-bar-label">MA</span>
+                <div class="hero-stat-bar-track"><div class="hero-stat-bar-fill" style="width:60%"></div></div>
+                <span class="hero-stat-bar-value">80K</span>
               </div>
-              <div class="hero-img-card hero-img-bottom">
-                <img src="https://cdn.prod.website-files.com/6894a5c18c9035760aabc38b/689de7048b8fc6e658ccabe3_Featured%20Widgets.webp" alt="Design components">
+              <div class="hero-stat-bar">
+                <span class="hero-stat-bar-label">NH</span>
+                <div class="hero-stat-bar-track"><div class="hero-stat-bar-fill" style="width:50%"></div></div>
+                <span class="hero-stat-bar-value">70K</span>
               </div>
             </div>
           </div>
@@ -189,6 +183,26 @@
       </div>
     </div>
   </section>
+
+  <!-- Floating bottom bar -->
+  <div class="floating-bar">
+    <div class="floating-bar-inner">
+      <svg class="floating-bar-icon" width="20" height="20" viewBox="0 0 28 28" fill="none">
+        <circle cx="14" cy="6" r="2.5" fill="currentColor"/>
+        <circle cx="14" cy="22" r="2.5" fill="currentColor"/>
+        <circle cx="6" cy="10" r="2.5" fill="currentColor"/>
+        <circle cx="22" cy="10" r="2.5" fill="currentColor"/>
+        <circle cx="6" cy="18" r="2.5" fill="currentColor"/>
+        <circle cx="22" cy="18" r="2.5" fill="currentColor"/>
+      </svg>
+      <button class="floating-bar-btn">
+        Pages
+        <svg width="10" height="6" viewBox="0 0 10 6" fill="none"><path d="M1 5l4-4 4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <img src="https://cdn.prod.website-files.com/684d826b556a837ae013b2e9/685544e89299c1a5846a8281_Figma.svg" alt="Figma" class="floating-bar-figma">
+      <a href="#" class="floating-bar-buy">Buy</a>
+    </div>
+  </div>
 
   <!-- ===================== CUSTOMER STORIES (Mini) ===================== -->
   <section class="mini-stories">
