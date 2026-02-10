@@ -774,3 +774,93 @@ a.contact-info-value:hover { color: var(--olive); }
 
 /* === Selection === */
 ::selection { background: var(--accent); color: var(--dark); }
+
+/* ===================== LOGOS SECTION ===================== */
+.logos-section { padding: 3rem 0; border-bottom: 1px solid var(--border); }
+.logos-label { text-align: center; font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 1.5rem; }
+.logos-row { display: flex; align-items: center; justify-content: center; gap: 3rem; flex-wrap: wrap; }
+.logo-item { font-family: var(--serif); font-size: 1.25rem; color: var(--text-muted); opacity: 0.5; transition: var(--transition); }
+.logo-item:hover { opacity: 0.8; }
+
+/* ===================== SOLUTION SECTION ===================== */
+.solution-section { padding: 4rem 0; background: var(--bg-alt); }
+.solution-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; }
+.solution-left { }
+.solution-heading { font-size: clamp(1.7rem, 3vw, 2.4rem); line-height: 1.2; color: var(--black); margin-top: 1rem; }
+.solution-right { }
+.solution-text { font-size: 0.95rem; color: var(--text-secondary); line-height: 1.7; margin-bottom: 1.25rem; }
+.solution-text strong { color: var(--text); }
+
+/* ===================== RESULTS SECTION ===================== */
+.results-section { padding: 4rem 0; background: var(--white); }
+.results-header { text-align: center; margin-bottom: 3rem; }
+.results-heading { font-size: clamp(1.8rem, 3.5vw, 2.8rem); color: var(--black); margin-top: 0.5rem; }
+.results-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; }
+.result-card { background: var(--bg); border-radius: var(--radius-xl); padding: 2rem; text-align: center; }
+.result-number { display: block; font-family: var(--serif); font-size: 3rem; color: var(--accent); line-height: 1; margin-bottom: 0.5rem; }
+.result-label { font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5; }
+
+/* ===================== GUARANTEE SECTION ===================== */
+.guarantee-section { padding: 4rem 0; }
+.guarantee-inner { background: var(--bg-alt); border-radius: var(--radius-2xl); padding: 3rem; text-align: center; max-width: 700px; margin: 0 auto; }
+.guarantee-badge { display: inline-flex; align-items: center; justify-content: center; width: 80px; height: 80px; background: var(--accent); border-radius: 50%; color: var(--dark); margin-bottom: 1.5rem; }
+.guarantee-heading { font-size: clamp(1.5rem, 2.5vw, 2rem); color: var(--black); margin-bottom: 1rem; }
+.guarantee-text { font-size: 0.95rem; color: var(--text-secondary); line-height: 1.7; margin-bottom: 1.5rem; }
+
+/* ===================== FAQ SECTION ===================== */
+.faq-section { padding: 4rem 0; background: var(--bg-alt); }
+.faq-header { text-align: center; margin-bottom: 3rem; }
+.faq-heading { font-size: clamp(1.8rem, 3vw, 2.4rem); color: var(--black); margin-top: 0.5rem; }
+.faq-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; max-width: 1000px; margin: 0 auto; }
+.faq-item { background: var(--white); border-radius: var(--radius); border: 1px solid var(--border-light); overflow: hidden; }
+.faq-question { display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 1.25rem 1.5rem; font-size: 0.95rem; font-weight: 500; color: var(--text); text-align: left; cursor: pointer; transition: var(--transition); }
+.faq-question:hover { background: var(--bg); }
+.faq-question svg { flex-shrink: 0; transition: transform 0.3s ease; }
+.faq-item.active .faq-question svg { transform: rotate(180deg); }
+.faq-answer { display: none; padding: 0 1.5rem 1.25rem; }
+.faq-item.active .faq-answer { display: block; }
+.faq-answer p { font-size: 0.88rem; color: var(--text-secondary); line-height: 1.7; }
+
+/* ===================== PAIN POINTS ===================== */
+.intro-pain-points { background: var(--white); border-radius: var(--radius); padding: 1.5rem; border: 1px solid var(--border-light); }
+.pain-title { font-family: var(--sans); font-size: 0.9rem; font-weight: 600; color: var(--text); margin-bottom: 1rem; }
+.pain-list { list-style: none; display: flex; flex-direction: column; gap: 0.75rem; }
+.pain-list li { position: relative; padding-left: 1.5rem; font-size: 0.88rem; color: var(--text-secondary); line-height: 1.5; }
+.pain-list li::before { content: "✗"; position: absolute; left: 0; color: #D9534F; font-weight: 600; }
+
+/* ===================== CAP INFO LIST ===================== */
+.cap-info-list { list-style: none; margin-top: 1rem; display: flex; flex-direction: column; gap: 0.5rem; }
+.cap-info-list li { position: relative; padding-left: 1.25rem; font-size: 0.82rem; color: rgba(255,255,255,0.6); }
+.cap-info-list li::before { content: "→"; position: absolute; left: 0; color: var(--accent); }
+
+/* ===================== CONTACT ENHANCEMENTS ===================== */
+.contact-benefits { display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 1.5rem; }
+.contact-benefit { display: flex; align-items: center; gap: 0.75rem; font-size: 0.88rem; color: var(--text); }
+.contact-slots { background: var(--bg); border-radius: var(--radius); padding: 1.25rem; margin-bottom: 1.5rem; }
+.slots-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem; }
+.slots-month { font-size: 0.85rem; font-weight: 500; color: var(--text); }
+.slots-available { font-size: 0.75rem; color: var(--accent); font-weight: 600; }
+.slots-bar { height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; }
+.slots-fill { height: 100%; background: var(--accent); border-radius: 3px; }
+.contact-right-text { font-size: 0.88rem; color: var(--text-secondary); line-height: 1.6; margin-top: 0.5rem; }
+.form-note { font-size: 0.75rem; color: var(--text-muted); text-align: center; margin-top: 0.5rem; }
+
+/* ===================== ABOUT TEXT ===================== */
+.about-text { font-size: 0.95rem; color: var(--text-secondary); line-height: 1.7; margin-bottom: 1.5rem; }
+
+/* ===================== STORY PERSON AVATAR ===================== */
+.story-person-avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--accent); color: var(--dark); display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 600; flex-shrink: 0; }
+.testimonial-author-avatar { width: 44px; height: 44px; border-radius: 50%; background: var(--accent); color: var(--dark); display: flex; align-items: center; justify-content: center; font-size: 0.85rem; font-weight: 600; flex-shrink: 0; }
+
+/* ===================== RESPONSIVE ADDITIONS ===================== */
+@media (max-width: 1024px) {
+  .solution-inner { grid-template-columns: 1fr; gap: 2rem; }
+  .results-grid { grid-template-columns: repeat(2, 1fr); }
+  .faq-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 640px) {
+  .results-grid { grid-template-columns: 1fr; }
+  .logos-row { gap: 1.5rem; }
+  .logo-item { font-size: 1rem; }
+}
