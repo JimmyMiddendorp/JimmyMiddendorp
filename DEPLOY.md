@@ -1,4 +1,23 @@
-# MEMENTO / MORI — live zetten op je `.dev`-domein via Cloudflare Pages
+# MEMENTO / MORI — deploy
+
+## ✅ Nu al live (zonder setup)
+
+De app draait live via een GitHub-CDN (githack), gevoed door de
+`gh-pages` branch die automatisch bij elke push wordt ververst:
+
+**https://raw.githack.com/JimmyMiddendorp/JimmyMiddendorp/gh-pages/index.html**
+
+Dit vereist geen enkele handmatige stap. Het is alleen geen eigen domein.
+Voor een eigen `.dev`-domein volg je hieronder Cloudflare Pages.
+
+> Waarom niet automatisch op `github.io`? Het *aanzetten* van GitHub Pages
+> vereist repo-admin en kan niet met de GitHub Actions-token (403). Zet je
+> Pages één keer zelf aan (Settings → Pages → Source: `gh-pages`), dan draait
+> de app ook op `https://jimmymiddendorp.github.io/JimmyMiddendorp/`.
+
+---
+
+# Live op je `.dev`-domein via Cloudflare Pages
 
 De app is een statische web-app (geen server, geen build-stap nodig) en werkt
 als **PWA**: bezoekers kunnen 'm op hun telefoon installeren en offline gebruiken.
