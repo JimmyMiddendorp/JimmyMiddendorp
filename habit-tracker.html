@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Questline — Gamified Habit Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Instrument+Serif&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   QUESTLINE — Gamified Habit Tracker
+   Self-contained. Saves to localStorage. No dependencies.
+   ============================================================ */
+:root{
+  --bg:#0f1115; --bg-soft:#161a21; --card:#1b2028; --card-hi:#212836;
+  --line:#2a323f; --line-soft:#232a35;
+  --text:#eef1f5; --text-dim:#9aa4b2; --text-mute:#6b7484;
+  --accent:#c5d930; --accent-2:#a7e34a; --accent-ink:#14210a;
+  --xp:#7c8cff; --xp-2:#5b6bff;
+  --hp:#ff5d73; --hp-2:#ff3d5a;
+  --good:#ffd257; --good-2:#ffb02e;
+  --ok:#3ddc97;
+  --serif:'Instrument Serif',Georgia,serif;
+  --sans:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  --r:16px; --r-sm:12px; --r-lg:22px;
+  --sh:0 10px 40px rgba(0,0,0,.35);
+  --ease:cubic-bezier(.4,0,.2,1);
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+body{
+  font-family:var(--sans);color:var(--text);line-height:1.55;min-height:100vh;
+  background:
+    radial-gradient(1100px 600px at 12% -8%,rgba(124,140,255,.13),transparent 60%),
+    radial-gradient(900px 500px at 100% 0%,rgba(197,217,48,.10),transparent 55%),
+    var(--bg);
+  overflow-x:hidden;
+}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+input,select,textarea{font-family:inherit;font-size:inherit;color:inherit}
+::selection{background:var(--accent);color:var(--accent-ink)}
+
+.wrap{max-width:1080px;margin:0 auto;padding:26px 20px 120px}
+
+/* ===== Header ===== */
+.top{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:22px}
+.brand{display:flex;align-items:center;gap:12px}
+.logo{
+  width:44px;height:44px;border-radius:13px;display:grid;place-items:center;font-size:22px;
+  background:linear-gradient(135deg,var(--accent),var(--accent-2));box-shadow:0 6px 20px rgba(197,217,48,.35)
+}
+.brand h1{font-family:var(--serif);font-weight:400;font-size:1.9rem;letter-spacing:.2px;line-height:1}
+.brand p{font-size:.78rem;color:var(--text-mute);margin-top:2px}
+.top-actions{display:flex;gap:10px;align-items:center}
+.icon-btn{
+  width:42px;height:42px;border-radius:12px;background:var(--card);border:1px solid var(--line);
+  display:grid;place-items:center;font-size:1.05rem;transition:.2s var(--ease)
+}
+.icon-btn:hover{background:var(--card-hi);border-color:var(--line);transform:translateY(-1px)}
+
+/* ===== Hero / Character ===== */
+.hero{
+  background:linear-gradient(180deg,var(--card-hi),var(--card));
+  border:1px solid var(--line);border-radius:var(--r-lg);padding:24px;box-shadow:var(--sh);
+  display:grid;grid-template-columns:auto 1fr;gap:26px;margin-bottom:18px;position:relative;overflow:hidden
+}
+.hero::after{content:"";position:absolute;inset:0;background:radial-gradient(600px 200px at 90% -20%,rgba(124,140,255,.14),transparent 60%);pointer-events:none}
+.avatar-col{display:flex;flex-direction:column;align-items:center;gap:12px;position:relative;z-index:1}
+.avatar{
+  width:118px;height:118px;border-radius:28px;display:grid;place-items:center;font-size:60px;position:relative;
+  background:radial-gradient(circle at 30% 25%,#2b3446,#191e28);border:1px solid var(--line);
+  box-shadow:inset 0 0 30px rgba(0,0,0,.4)
+}
+.avatar .ring{position:absolute;inset:-8px;border-radius:34px;border:2px solid transparent;
+  background:conic-gradient(var(--accent) var(--pct,0%),rgba(255,255,255,.07) 0) border-box;
+  -webkit-mask:linear-gradient(#000 0 0) padding-box,linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor;mask-composite:exclude;transition:.5s var(--ease)}
+.lvl-badge{
+  position:absolute;bottom:-6px;right:-6px;min-width:34px;height:34px;padding:0 8px;border-radius:11px;
+  background:linear-gradient(135deg,var(--accent),var(--accent-2));color:var(--accent-ink);
+  display:grid;place-items:center;font-weight:800;font-size:.9rem;box-shadow:0 6px 16px rgba(197,217,48,.4);border:2px solid var(--bg)
+}
+.name-edit{display:flex;align-items:center;gap:6px}
+.hero-name{font-family:var(--serif);font-size:1.35rem;background:transparent;border:none;text-align:center;width:150px;border-bottom:1px dashed transparent;transition:.2s;border-radius:4px}
+.hero-name:hover,.hero-name:focus{border-bottom-color:var(--line);outline:none}
+.title-tag{font-size:.74rem;color:var(--accent);font-weight:600;letter-spacing:.4px;text-transform:uppercase}
+
+.stats-col{display:flex;flex-direction:column;justify-content:center;gap:16px;position:relative;z-index:1}
+.stat-row{display:flex;flex-direction:column;gap:7px}
+.stat-head{display:flex;align-items:center;justify-content:space-between;font-size:.82rem}
+.stat-head .lbl{display:flex;align-items:center;gap:7px;font-weight:600;color:var(--text-dim)}
+.dot{width:9px;height:9px;border-radius:50%}
+.stat-head .val{font-variant-numeric:tabular-nums;color:var(--text-mute);font-weight:600}
+.bar{height:14px;border-radius:20px;background:var(--bg-soft);border:1px solid var(--line-soft);overflow:hidden;position:relative}
+.bar .fill{height:100%;border-radius:20px;width:0;transition:width .6s var(--ease);position:relative}
+.bar .fill::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.25),transparent);background-size:200% 100%;animation:shimmer 2.4s linear infinite}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.fill.xp{background:linear-gradient(90deg,var(--xp-2),var(--xp))}
+.fill.hp{background:linear-gradient(90deg,var(--hp-2),var(--hp))}
+.mini-stats{display:flex;gap:18px;flex-wrap:wrap;margin-top:2px}
+.mini{display:flex;align-items:center;gap:7px;font-size:.8rem;color:var(--text-dim)}
+.mini b{color:var(--text);font-variant-numeric:tabular-nums;font-size:.92rem}
+
+/* ===== Good Day meter ===== */
+.goodday{
+  background:linear-gradient(135deg,rgba(255,210,87,.10),var(--card));
+  border:1px solid var(--line);border-radius:var(--r-lg);padding:20px 24px;margin-bottom:18px;
+  display:grid;grid-template-columns:1fr auto;gap:18px;align-items:center;position:relative;overflow:hidden
+}
+.gd-info h3{font-family:var(--serif);font-size:1.5rem;font-weight:400;display:flex;align-items:center;gap:10px}
+.gd-info p{font-size:.85rem;color:var(--text-dim);margin-top:3px}
+.gd-bar{height:20px;border-radius:20px;background:var(--bg-soft);border:1px solid var(--line-soft);overflow:hidden;margin-top:12px}
+.gd-bar .fill{height:100%;width:0;border-radius:20px;background:linear-gradient(90deg,var(--good-2),var(--good));transition:width .6s var(--ease)}
+.gd-ring{width:96px;height:96px;position:relative;display:grid;place-items:center;flex-shrink:0}
+.gd-ring svg{transform:rotate(-90deg)}
+.gd-ring .pct{position:absolute;font-weight:800;font-size:1.35rem;font-variant-numeric:tabular-nums}
+.gd-ring .pct small{display:block;font-size:.6rem;color:var(--text-mute);font-weight:600;letter-spacing:.5px;margin-top:-2px;text-transform:uppercase}
+.gd-badge{position:absolute;top:14px;right:20px;font-size:.72rem;font-weight:700;color:var(--good-2);opacity:0;transform:scale(.6);transition:.4s var(--ease)}
+.gd-badge.on{opacity:1;transform:scale(1)}
+
+/* ===== Sections ===== */
+.section{margin-top:26px}
+.sec-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:10px}
+.sec-head h2{font-family:var(--serif);font-weight:400;font-size:1.5rem;display:flex;align-items:center;gap:9px}
+.sec-head .count{font-size:.75rem;color:var(--text-mute);background:var(--card);border:1px solid var(--line);padding:3px 10px;border-radius:20px;font-weight:600}
+.add-btn{
+  display:inline-flex;align-items:center;gap:8px;padding:9px 16px;border-radius:11px;font-weight:600;font-size:.86rem;
+  background:linear-gradient(135deg,var(--accent),var(--accent-2));color:var(--accent-ink);transition:.2s var(--ease);
+  box-shadow:0 4px 14px rgba(197,217,48,.3)
+}
+.add-btn:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(197,217,48,.4)}
+
+/* ===== Task cards ===== */
+.tasks{display:flex;flex-direction:column;gap:11px}
+.task{
+  background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:15px 16px;
+  display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center;transition:.25s var(--ease);position:relative;overflow:hidden
+}
+.task:hover{border-color:#37414f;transform:translateY(-1px)}
+.task.done{opacity:.62}
+.task.done .t-name{text-decoration:line-through;color:var(--text-mute)}
+.task::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--diff,var(--accent));opacity:.8}
+.check{
+  width:30px;height:30px;border-radius:10px;border:2px solid var(--line);background:var(--bg-soft);
+  display:grid;place-items:center;transition:.2s var(--ease);flex-shrink:0;font-size:.9rem;color:transparent
+}
+.check:hover{border-color:var(--accent)}
+.task.done .check{background:linear-gradient(135deg,var(--accent),var(--accent-2));border-color:var(--accent);color:var(--accent-ink)}
+.t-body{min-width:0}
+.t-name{font-weight:600;font-size:.98rem;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.t-emoji{font-size:1.05rem}
+.t-meta{display:flex;align-items:center;gap:10px;font-size:.76rem;color:var(--text-mute);margin-top:4px;flex-wrap:wrap}
+.chip{padding:2px 8px;border-radius:20px;background:var(--bg-soft);border:1px solid var(--line-soft);font-weight:600}
+.chip.xp{color:var(--xp);border-color:rgba(124,140,255,.3)}
+.chip.streak{color:var(--good-2);border-color:rgba(255,176,46,.3)}
+.chip.diff{color:var(--diff)}
+.t-actions{display:flex;gap:6px;opacity:0;transition:.2s;flex-shrink:0}
+.task:hover .t-actions{opacity:1}
+.t-act{width:32px;height:32px;border-radius:9px;background:var(--bg-soft);border:1px solid var(--line);display:grid;place-items:center;font-size:.85rem;color:var(--text-dim);transition:.15s}
+.t-act:hover{background:var(--card-hi);color:var(--text)}
+.t-act.del:hover{color:var(--hp);border-color:rgba(255,93,115,.4)}
+
+.empty{text-align:center;padding:38px 20px;color:var(--text-mute);border:1.5px dashed var(--line);border-radius:var(--r);font-size:.9rem}
+.empty .big{font-size:2.2rem;margin-bottom:8px;opacity:.7}
+
+/* ===== Modal ===== */
+.overlay{position:fixed;inset:0;background:rgba(6,8,12,.7);backdrop-filter:blur(6px);display:none;place-items:center;z-index:100;padding:20px;animation:fade .2s}
+.overlay.on{display:grid}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.modal{
+  width:100%;max-width:440px;background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);
+  padding:26px;box-shadow:var(--sh);animation:pop .28s var(--ease)
+}
+@keyframes pop{from{opacity:0;transform:translateY(14px) scale(.97)}to{opacity:1;transform:none}}
+.modal h3{font-family:var(--serif);font-weight:400;font-size:1.6rem;margin-bottom:18px}
+.field{margin-bottom:16px}
+.field label{display:block;font-size:.8rem;font-weight:600;color:var(--text-dim);margin-bottom:7px}
+.field input,.field select{
+  width:100%;padding:12px 14px;border-radius:11px;background:var(--bg-soft);border:1px solid var(--line);
+  transition:.2s;font-size:.95rem
+}
+.field input:focus,.field select:focus{outline:none;border-color:var(--accent);background:var(--card-hi)}
+.emoji-pick{display:flex;gap:6px;flex-wrap:wrap}
+.emoji-pick button{width:40px;height:40px;border-radius:11px;background:var(--bg-soft);border:1px solid var(--line);font-size:1.15rem;transition:.15s}
+.emoji-pick button.sel{border-color:var(--accent);background:var(--card-hi);transform:scale(1.05)}
+.emoji-pick button:hover{background:var(--card-hi)}
+.seg{display:flex;gap:8px}
+.seg button{flex:1;padding:11px;border-radius:11px;background:var(--bg-soft);border:1px solid var(--line);font-weight:600;font-size:.85rem;color:var(--text-dim);transition:.15s}
+.seg button.sel{background:linear-gradient(135deg,var(--accent),var(--accent-2));color:var(--accent-ink);border-color:transparent}
+.diff-seg button.sel{background:var(--diff-c,var(--accent));color:#fff;border-color:transparent}
+.modal-actions{display:flex;gap:10px;margin-top:22px}
+.modal-actions button{flex:1;padding:12px;border-radius:12px;font-weight:600;font-size:.92rem;transition:.2s var(--ease)}
+.btn-cancel{background:var(--bg-soft);border:1px solid var(--line);color:var(--text-dim)}
+.btn-cancel:hover{background:var(--card-hi);color:var(--text)}
+.btn-save{background:linear-gradient(135deg,var(--accent),var(--accent-2));color:var(--accent-ink)}
+.btn-save:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(197,217,48,.35)}
+
+/* ===== Toast + level up ===== */
+.toast-wrap{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:200;display:flex;flex-direction:column;gap:10px;align-items:center}
+.toast{
+  background:var(--card-hi);border:1px solid var(--line);border-radius:14px;padding:12px 18px;font-size:.9rem;font-weight:600;
+  box-shadow:var(--sh);display:flex;align-items:center;gap:10px;animation:slideUp .35s var(--ease);white-space:nowrap
+}
+.toast .em{font-size:1.2rem}
+@keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
+
+.levelup{
+  position:fixed;inset:0;display:none;place-items:center;z-index:250;pointer-events:none
+}
+.levelup.on{display:grid;animation:fade .3s}
+.levelup .card{
+  background:linear-gradient(160deg,var(--card-hi),var(--card));border:1px solid var(--accent);
+  border-radius:24px;padding:34px 46px;text-align:center;box-shadow:0 20px 70px rgba(197,217,48,.3);animation:pop .4s var(--ease)
+}
+.levelup .big{font-size:3rem;margin-bottom:6px}
+.levelup h2{font-family:var(--serif);font-weight:400;font-size:2rem;color:var(--accent)}
+.levelup p{color:var(--text-dim);font-size:.95rem;margin-top:4px}
+
+/* ===== Confetti canvas ===== */
+#confetti{position:fixed;inset:0;pointer-events:none;z-index:300}
+
+/* ===== Footer note ===== */
+.foot{text-align:center;margin-top:40px;color:var(--text-mute);font-size:.78rem}
+.foot a{color:var(--text-dim)}
+
+@media(max-width:720px){
+  .hero{grid-template-columns:1fr;gap:20px}
+  .avatar-col{flex-direction:row;justify-content:center;gap:18px}
+  .goodday{grid-template-columns:1fr}
+  .gd-ring{justify-self:center}
+  .t-actions{opacity:1}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- Header -->
+  <header class="top">
+    <div class="brand">
+      <div class="logo">🎯</div>
+      <div>
+        <h1>Questline</h1>
+        <p>Build the habit. Build the character.</p>
+      </div>
+    </div>
+    <div class="top-actions">
+      <button class="icon-btn" id="resetToday" title="Reset today's dailies">🔄</button>
+      <button class="icon-btn" id="wipe" title="Reset everything">🗑️</button>
+    </div>
+  </header>
+
+  <!-- Character hero -->
+  <section class="hero">
+    <div class="avatar-col">
+      <div class="avatar">
+        <div class="ring" id="xpRing"></div>
+        <span id="avatarEmoji">🧙</span>
+        <div class="lvl-badge" id="lvlBadge">1</div>
+      </div>
+      <div class="name-edit">
+        <input class="hero-name" id="heroName" value="Hero" maxlength="16" spellcheck="false">
+      </div>
+      <div class="title-tag" id="heroTitle">Novice</div>
+    </div>
+
+    <div class="stats-col">
+      <div class="stat-row">
+        <div class="stat-head">
+          <span class="lbl"><span class="dot" style="background:var(--xp)"></span>XP · Level <span id="lvlText">1</span></span>
+          <span class="val"><span id="xpCur">0</span> / <span id="xpNeed">100</span></span>
+        </div>
+        <div class="bar"><div class="fill xp" id="xpFill"></div></div>
+      </div>
+      <div class="stat-row">
+        <div class="stat-head">
+          <span class="lbl"><span class="dot" style="background:var(--hp)"></span>HP · Vitality</span>
+          <span class="val"><span id="hpCur">100</span> / 100</span>
+        </div>
+        <div class="bar"><div class="fill hp" id="hpFill"></div></div>
+      </div>
+      <div class="mini-stats">
+        <span class="mini">🔥 <b id="statStreak">0</b> day streak</span>
+        <span class="mini">✨ <b id="statTotalXp">0</b> total XP</span>
+        <span class="mini">✅ <b id="statDone">0</b> completed</span>
+        <span class="mini">🏆 <b id="statGoodDays">0</b> good days</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Good Day meter -->
+  <section class="goodday">
+    <span class="gd-badge" id="gdBadge">✨ GREAT DAY!</span>
+    <div class="gd-info">
+      <h3>☀️ Good Day Meter</h3>
+      <p id="gdText">Complete your daily habits to fill the meter and make today count.</p>
+      <div class="gd-bar"><div class="fill" id="gdFill"></div></div>
+    </div>
+    <div class="gd-ring">
+      <svg width="96" height="96">
+        <circle cx="48" cy="48" r="42" fill="none" stroke="var(--line-soft)" stroke-width="8"/>
+        <circle id="gdCircle" cx="48" cy="48" r="42" fill="none" stroke="var(--good)" stroke-width="8"
+          stroke-linecap="round" stroke-dasharray="264" stroke-dashoffset="264"/>
+      </svg>
+      <div class="pct"><span id="gdPct">0</span>%<small>today</small></div>
+    </div>
+  </section>
+
+  <!-- Daily habits -->
+  <section class="section">
+    <div class="sec-head">
+      <h2>🔁 Daily Habits <span class="count" id="dailyCount">0</span></h2>
+      <button class="add-btn" data-add="daily">＋ Add habit</button>
+    </div>
+    <div class="tasks" id="dailyList"></div>
+  </section>
+
+  <!-- One-off tasks -->
+  <section class="section">
+    <div class="sec-head">
+      <h2>🎯 Quests & To-dos <span class="count" id="taskCount">0</span></h2>
+      <button class="add-btn" data-add="task">＋ Add quest</button>
+    </div>
+    <div class="tasks" id="taskList"></div>
+  </section>
+
+  <p class="foot">Everything saves automatically to this browser. 🔒 Your data never leaves your device.</p>
+</div>
+
+<!-- Add/Edit modal -->
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <h3 id="modalTitle">New Habit</h3>
+    <div class="field">
+      <label>What do you want to do?</label>
+      <input id="mName" placeholder="e.g. Drink water, Read 10 pages…" maxlength="60">
+    </div>
+    <div class="field">
+      <label>Icon</label>
+      <div class="emoji-pick" id="emojiPick"></div>
+    </div>
+    <div class="field" id="typeField">
+      <label>Type</label>
+      <div class="seg" id="typeSeg">
+        <button data-type="daily">🔁 Daily habit</button>
+        <button data-type="task">🎯 One-off quest</button>
+      </div>
+    </div>
+    <div class="field">
+      <label>Difficulty <span style="color:var(--text-mute);font-weight:400">— more effort, more XP</span></label>
+      <div class="seg diff-seg" id="diffSeg">
+        <button data-diff="easy">Easy · 10</button>
+        <button data-diff="medium">Medium · 25</button>
+        <button data-diff="hard">Hard · 50</button>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" id="mCancel">Cancel</button>
+      <button class="btn-save" id="mSave">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Level up -->
+<div class="levelup" id="levelup">
+  <div class="card">
+    <div class="big">⬆️</div>
+    <h2>Level Up!</h2>
+    <p>You reached level <b id="luLevel">2</b> — <span id="luTitle">Apprentice</span></p>
+  </div>
+</div>
+
+<div class="toast-wrap" id="toasts"></div>
+<canvas id="confetti"></canvas>
+
+<script>
+/* ============================================================
+   Questline — state, persistence, game logic
+   ============================================================ */
+const KEY='questline_v1';
+const EMOJIS=['🎯','💧','📚','🏃','🧘','💪','🥗','😴','☀️','🧹','✍️','🎸','🧠','💰','📞','🌱','🚿','🦷','🚭','☕'];
+const DIFF={easy:{xp:10,color:'#3ddc97'},medium:{xp:25,color:'#7c8cff'},hard:{xp:50,color:'#ff8f4a'}};
+const TITLES=[[1,'Novice'],[3,'Apprentice'],[6,'Adventurer'],[10,'Journeyman'],[15,'Warrior'],[20,'Hero'],[30,'Champion'],[45,'Legend'],[60,'Ascended']];
+const AVATARS=[[1,'🧙'],[5,'🧑‍🚀'],[10,'🦸'],[20,'🥷'],[35,'🐉'],[60,'👑']];
+
+const todayStr=()=> new Date().toISOString().slice(0,10);
+const xpForLevel=(lvl)=> Math.round(100*Math.pow(lvl,1.35)); // XP needed to go from lvl -> lvl+1
+
+let _idc=0;
+function id(){return Math.random().toString(36).slice(2,9)+(_idc++).toString(36)+performance.now().toString(36).slice(-3)}
+
+let S=load();
+
+function fresh(){
+  return {
+    name:'Hero', xp:0, level:1, totalXp:0, hp:100,
+    streak:0, goodDays:0, completedCount:0,
+    lastActive:todayStr(), lastGoodDay:null,
+    dailies:[
+      {id:id(),name:'Drink water',emoji:'💧',diff:'easy',doneOn:null},
+      {id:id(),name:'Move your body',emoji:'🏃',diff:'medium',doneOn:null},
+      {id:id(),name:'Read 10 minutes',emoji:'📚',diff:'easy',doneOn:null},
+    ],
+    tasks:[
+      {id:id(),name:'Plan my week',emoji:'✍️',diff:'medium',done:false},
+    ],
+  };
+}
+function load(){
+  try{const r=JSON.parse(localStorage.getItem(KEY));return r||fresh();}catch(e){return fresh();}
+}
+function save(){localStorage.setItem(KEY,JSON.stringify(S));}
+
+/* ---- Daily rollover: reset dailies, handle streak & HP ---- */
+function rollover(){
+  const t=todayStr();
+  if(S.lastActive===t) return;
+  // How many days passed
+  const wasCompleteYesterday = S.dailies.length>0 && S.dailies.every(d=>d.doneOn===S.lastActive);
+  if(wasCompleteYesterday){
+    // streak continues only if consecutive day
+    const y=new Date(t); y.setDate(y.getDate()-1);
+    if(y.toISOString().slice(0,10)===S.lastActive){ /* streak already counted */ }
+  } else {
+    // missed a full day of dailies -> lose streak + some HP
+    S.streak=0;
+    S.hp=Math.max(0,S.hp-15);
+  }
+  // Clear today's completion state on dailies (they show fresh)
+  S.lastActive=t;
+  save();
+}
+
+/* ============================================================
+   Rendering
+   ============================================================ */
+const $=s=>document.querySelector(s);
+const el=(t,c)=>{const e=document.createElement(t);if(c)e.className=c;return e;};
+
+function currentTitle(){let r='Novice';for(const[l,t]of TITLES)if(S.level>=l)r=t;return r;}
+function currentAvatar(){let r='🧙';for(const[l,a]of AVATARS)if(S.level>=l)r=a;return r;}
+
+function render(){
+  const t=todayStr();
+  // Character
+  $('#heroName').value=S.name;
+  $('#avatarEmoji').textContent=currentAvatar();
+  $('#lvlBadge').textContent=S.level;
+  $('#lvlText').textContent=S.level;
+  $('#heroTitle').textContent=currentTitle();
+
+  const need=xpForLevel(S.level);
+  $('#xpCur').textContent=S.xp;
+  $('#xpNeed').textContent=need;
+  const xpPct=Math.min(100,Math.round(S.xp/need*100));
+  $('#xpFill').style.width=xpPct+'%';
+  $('#xpRing').style.setProperty('--pct',xpPct+'%');
+
+  $('#hpCur').textContent=S.hp;
+  $('#hpFill').style.width=S.hp+'%';
+
+  $('#statStreak').textContent=S.streak;
+  $('#statTotalXp').textContent=S.totalXp;
+  $('#statDone').textContent=S.completedCount;
+  $('#statGoodDays').textContent=S.goodDays;
+
+  // Good day meter
+  const total=S.dailies.length;
+  const done=S.dailies.filter(d=>d.doneOn===t).length;
+  const pct= total? Math.round(done/total*100):0;
+  $('#gdFill').style.width=pct+'%';
+  $('#gdPct').textContent=pct;
+  $('#gdCircle').style.strokeDashoffset=264-(264*pct/100);
+  const badge=$('#gdBadge');
+  if(pct===100&&total>0){badge.classList.add('on');$('#gdText').textContent="You did it! Every daily habit complete. That's a great day. 🎉";}
+  else{badge.classList.remove('on');$('#gdText').textContent= total? `${done} of ${total} daily habits done — keep going!` : "Add a daily habit to start filling your Good Day meter.";}
+
+  // Lists
+  renderList('#dailyList','daily');
+  renderList('#taskList','task');
+  $('#dailyCount').textContent=S.dailies.length;
+  $('#taskCount').textContent=S.tasks.filter(x=>!x.done).length+'/'+S.tasks.length;
+}
+
+function renderList(sel,type){
+  const box=$(sel);box.innerHTML='';
+  const items= type==='daily'? S.dailies : S.tasks;
+  const t=todayStr();
+  if(items.length===0){
+    const e=el('div','empty');
+    e.innerHTML=`<div class="big">${type==='daily'?'🌱':'📜'}</div>${type==='daily'?'No daily habits yet. Add one to build your streak!':'No quests yet. Add a to-do to earn XP!'}`;
+    box.appendChild(e);return;
+  }
+  for(const it of items){
+    const done= type==='daily'? it.doneOn===t : it.done;
+    const d=DIFF[it.diff]||DIFF.easy;
+    const card=el('div','task'+(done?' done':''));
+    card.style.setProperty('--diff',d.color);
+    card.innerHTML=`
+      <button class="check" data-check="${type}:${it.id}">✓</button>
+      <div class="t-body">
+        <div class="t-name"><span class="t-emoji">${it.emoji||'🎯'}</span>${escapeHtml(it.name)}</div>
+        <div class="t-meta">
+          <span class="chip xp">+${d.xp} XP</span>
+          <span class="chip diff" style="--diff:${d.color}">${it.diff}</span>
+          ${type==='daily'?`<span class="chip streak">🔁 daily</span>`:''}
+        </div>
+      </div>
+      <div class="t-actions">
+        <button class="t-act" data-edit="${type}:${it.id}" title="Edit">✏️</button>
+        <button class="t-act del" data-del="${type}:${it.id}" title="Delete">🗑️</button>
+      </div>`;
+    box.appendChild(card);
+  }
+}
+function escapeHtml(s){return s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+
+/* ============================================================
+   Actions: complete / add / edit / delete
+   ============================================================ */
+document.addEventListener('click',e=>{
+  const chk=e.target.closest('[data-check]');
+  const edt=e.target.closest('[data-edit]');
+  const del=e.target.closest('[data-del]');
+  const add=e.target.closest('[data-add]');
+  if(chk) toggle(...chk.dataset.check.split(':'), chk);
+  if(edt) openModal('edit',...edt.dataset.edit.split(':'));
+  if(del) removeItem(...del.dataset.del.split(':'));
+  if(add) openModal('add',add.dataset.add);
+});
+
+function toggle(type,itemId,btn){
+  const t=todayStr();
+  let item,wasDone,d;
+  if(type==='daily'){
+    item=S.dailies.find(x=>x.id===itemId);if(!item)return;
+    wasDone=item.doneOn===t;
+    item.doneOn= wasDone? null : t;
+  }else{
+    item=S.tasks.find(x=>x.id===itemId);if(!item)return;
+    wasDone=item.done;
+    item.done=!wasDone;
+  }
+  d=DIFF[item.diff]||DIFF.easy;
+  if(!wasDone){
+    // Completing
+    gainXp(d.xp);
+    S.completedCount++;
+    S.hp=Math.min(100,S.hp+3);
+    burstConfetti(btn);
+    if(type==='daily') checkGoodDay();
+    toast(`+${d.xp} XP`,'✨');
+  }else{
+    // Un-completing
+    S.totalXp=Math.max(0,S.totalXp-d.xp);
+    S.completedCount=Math.max(0,S.completedCount-1);
+    // simple XP refund
+    S.xp-=d.xp;
+    while(S.xp<0 && S.level>1){S.level--;S.xp+=xpForLevel(S.level);}
+    if(S.xp<0)S.xp=0;
+  }
+  save();render();
+}
+
+function gainXp(amt){
+  S.xp+=amt;S.totalXp+=amt;
+  let need=xpForLevel(S.level);
+  let leveled=false;
+  while(S.xp>=need){
+    S.xp-=need;S.level++;leveled=true;
+    S.hp=Math.min(100,S.hp+10);
+    need=xpForLevel(S.level);
+  }
+  if(leveled) showLevelUp();
+}
+
+function checkGoodDay(){
+  const t=todayStr();
+  const total=S.dailies.length;
+  const done=S.dailies.filter(d=>d.doneOn===t).length;
+  if(total>0 && done===total && S.lastGoodDay!==t){
+    S.lastGoodDay=t;
+    S.goodDays++;
+    S.streak++;
+    gainXp(30); // good-day bonus
+    S.hp=Math.min(100,S.hp+10);
+    setTimeout(()=>{bigConfetti();toast('Great day complete! +30 bonus XP 🔥','🏆');},350);
+  }
+}
+
+/* ---- Modal ---- */
+let modalMode='add',modalType='daily',editId=null,pickEmoji='🎯',pickDiff='easy';
+function openModal(mode,type,itemId){
+  modalMode=mode;modalType=type;editId=itemId||null;
+  $('#overlay').classList.add('on');
+  $('#typeField').style.display= mode==='edit'?'none':'block';
+  buildEmojiPick();
+  // segments
+  document.querySelectorAll('#typeSeg button').forEach(b=>b.classList.toggle('sel',b.dataset.type===type));
+  if(mode==='edit'){
+    const item=(type==='daily'?S.dailies:S.tasks).find(x=>x.id===itemId);
+    $('#modalTitle').textContent='Edit '+(type==='daily'?'Habit':'Quest');
+    $('#mName').value=item.name;pickEmoji=item.emoji||'🎯';pickDiff=item.diff||'easy';
+  }else{
+    $('#modalTitle').textContent= type==='daily'?'New Daily Habit':'New Quest';
+    $('#mName').value='';pickEmoji='🎯';pickDiff='easy';
+  }
+  selectEmoji(pickEmoji);selectDiff(pickDiff);
+  setTimeout(()=>$('#mName').focus(),50);
+}
+function closeModal(){$('#overlay').classList.remove('on');}
+function buildEmojiPick(){
+  const box=$('#emojiPick');box.innerHTML='';
+  EMOJIS.forEach(em=>{const b=el('button');b.textContent=em;b.onclick=()=>selectEmoji(em);box.appendChild(b);});
+}
+function selectEmoji(em){pickEmoji=em;document.querySelectorAll('#emojiPick button').forEach(b=>b.classList.toggle('sel',b.textContent===em));}
+function selectDiff(df){pickDiff=df;document.querySelectorAll('#diffSeg button').forEach(b=>b.classList.toggle('sel',b.dataset.diff===df));
+  const c=DIFF[df].color;document.querySelector('#diffSeg').style.setProperty('--diff-c',c);}
+
+document.querySelectorAll('#typeSeg button').forEach(b=>b.onclick=()=>{modalType=b.dataset.type;document.querySelectorAll('#typeSeg button').forEach(x=>x.classList.toggle('sel',x===b));$('#modalTitle').textContent=modalType==='daily'?'New Daily Habit':'New Quest';});
+document.querySelectorAll('#diffSeg button').forEach(b=>b.onclick=()=>selectDiff(b.dataset.diff));
+$('#mCancel').onclick=closeModal;
+$('#overlay').onclick=e=>{if(e.target.id==='overlay')closeModal();};
+$('#mSave').onclick=()=>{
+  const name=$('#mName').value.trim();
+  if(!name){$('#mName').focus();$('#mName').style.borderColor='var(--hp)';return;}
+  if(modalMode==='edit'){
+    const item=(modalType==='daily'?S.dailies:S.tasks).find(x=>x.id===editId);
+    item.name=name;item.emoji=pickEmoji;item.diff=pickDiff;
+  }else{
+    if(modalType==='daily') S.dailies.push({id:id(),name,emoji:pickEmoji,diff:pickDiff,doneOn:null});
+    else S.tasks.push({id:id(),name,emoji:pickEmoji,diff:pickDiff,done:false});
+    toast('Added! Go earn that XP','➕');
+  }
+  save();render();closeModal();
+};
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape')closeModal();
+  if(e.key==='Enter'&&$('#overlay').classList.contains('on'))$('#mSave').click();
+});
+
+function removeItem(type,itemId){
+  if(type==='daily')S.dailies=S.dailies.filter(x=>x.id!==itemId);
+  else S.tasks=S.tasks.filter(x=>x.id!==itemId);
+  save();render();
+}
+
+/* ---- Name edit ---- */
+$('#heroName').addEventListener('input',e=>{S.name=e.target.value||'Hero';save();});
+
+/* ---- Top actions ---- */
+$('#resetToday').onclick=()=>{
+  S.dailies.forEach(d=>d.doneOn=null);S.lastGoodDay=null;save();render();toast("Today's habits reset",'🔄');
+};
+$('#wipe').onclick=()=>{
+  if(confirm('Reset EVERYTHING — character, XP, and all habits? This cannot be undone.')){
+    S=fresh();save();render();toast('Fresh start!','🌱');
+  }
+};
+
+/* ============================================================
+   Level up + toasts
+   ============================================================ */
+function showLevelUp(){
+  $('#luLevel').textContent=S.level;
+  $('#luTitle').textContent=currentTitle();
+  const lu=$('#levelup');lu.classList.add('on');bigConfetti();
+  setTimeout(()=>lu.classList.remove('on'),1900);
+}
+function toast(msg,em){
+  const t=el('div','toast');t.innerHTML=`<span class="em">${em||'✨'}</span>${escapeHtml(msg)}`;
+  $('#toasts').appendChild(t);
+  setTimeout(()=>{t.style.transition='.3s';t.style.opacity='0';t.style.transform='translateY(12px)';setTimeout(()=>t.remove(),300);},2200);
+}
+
+/* ============================================================
+   Confetti (canvas, no libs)
+   ============================================================ */
+const cvs=$('#confetti'),ctx=cvs.getContext('2d');
+let parts=[];
+function sizeCanvas(){cvs.width=innerWidth;cvs.height=innerHeight;}
+sizeCanvas();addEventListener('resize',sizeCanvas);
+const COLORS=['#c5d930','#a7e34a','#7c8cff','#ffd257','#ff5d73','#3ddc97','#ff8f4a'];
+function spawn(x,y,n,power){
+  for(let i=0;i<n;i++){
+    const a=Math.random()*Math.PI*2,s=Math.random()*power+2;
+    parts.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s-power*0.5,
+      g:0.18+Math.random()*0.1,size:4+Math.random()*6,
+      color:COLORS[(Math.random()*COLORS.length)|0],
+      rot:Math.random()*6,vr:(Math.random()-0.5)*0.4,life:60+Math.random()*40,age:0});
+  }
+  if(!raf)loop();
+}
+function burstConfetti(btn){
+  let x=innerWidth/2,y=innerHeight/2;
+  if(btn){const r=btn.getBoundingClientRect();x=r.left+r.width/2;y=r.top+r.height/2;}
+  spawn(x,y,34,7);
+}
+function bigConfetti(){
+  spawn(innerWidth*0.5,innerHeight*0.35,90,11);
+  setTimeout(()=>spawn(innerWidth*0.25,innerHeight*0.4,50,9),120);
+  setTimeout(()=>spawn(innerWidth*0.75,innerHeight*0.4,50,9),220);
+}
+let raf=null;
+function loop(){
+  ctx.clearRect(0,0,cvs.width,cvs.height);
+  parts=parts.filter(p=>p.age<p.life);
+  for(const p of parts){
+    p.age++;p.vy+=p.g;p.x+=p.vx;p.y+=p.vy;p.rot+=p.vr;p.vx*=0.99;
+    const alpha=Math.max(0,1-p.age/p.life);
+    ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.rot);ctx.globalAlpha=alpha;
+    ctx.fillStyle=p.color;ctx.fillRect(-p.size/2,-p.size/2,p.size,p.size*0.6);ctx.restore();
+  }
+  if(parts.length)raf=requestAnimationFrame(loop);else{raf=null;ctx.clearRect(0,0,cvs.width,cvs.height);}
+}
+
+/* ============================================================
+   Boot
+   ============================================================ */
+rollover();
+render();
+</script>
+</body>
+</html>
