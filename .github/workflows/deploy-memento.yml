@@ -1,8 +1,12 @@
-name: Deploy MEMENTO to GitHub Pages
+name: Publish MEMENTO
 
-# Officiële GitHub Pages-flow: configure-pages zet Pages aan (build type
-# "workflow"), upload de map memento/ als artifact en deployt die.
-# App komt live op https://jimmymiddendorp.github.io/JimmyMiddendorp/
+# Publiceert de app (map memento/) naar de gh-pages branch bij elke push.
+# Die branch is publiek en wordt live geserveerd via een GitHub-CDN
+# (githack), zodat de app een werkende online link heeft zonder dat er
+# handmatig GitHub Pages of Cloudflare aangezet hoeft te worden.
+#
+# Wil je later een eigen domein? Zet dan GitHub Pages aan (bron: gh-pages)
+# of koppel Cloudflare Pages — zie DEPLOY.md.
 
 on:
   push:
@@ -10,34 +14,24 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
-  pages: write
-  id-token: write
+  contents: write
 
 concurrency:
-  group: "pages"
-  cancel-in-progress: false
+  group: "memento-publish"
+  cancel-in-progress: true
 
 jobs:
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+  publish:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Configure Pages (zet Pages aan)
-        uses: actions/configure-pages@v5
+      - name: Publish memento/ to gh-pages
+        uses: peaceiris/actions-gh-pages@v4
         with:
-          enablement: true
-
-      - name: Upload app als Pages-artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: ./memento
-
-      - name: Deploy naar GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./memento
+          publish_branch: gh-pages
+          force_orphan: true
+          commit_message: "Publish MEMENTO app"
