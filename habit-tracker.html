@@ -410,7 +410,7 @@ function fresh(){
 function load(){
   try{const r=JSON.parse(localStorage.getItem(KEY));return r||fresh();}catch(e){return fresh();}
 }
-function save(){localStorage.setItem(KEY,JSON.stringify(S));}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){/* storage unavailable — keep playing this session */}}
 
 /* ---- Daily rollover: reset dailies, handle streak & HP ---- */
 function rollover(){
