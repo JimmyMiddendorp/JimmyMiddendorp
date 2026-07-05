@@ -1,8 +1,8 @@
 name: Deploy MEMENTO to GitHub Pages
 
-# Publiceert de app (map memento/) naar de gh-pages branch en zet
-# GitHub Pages aan met die branch als bron. Zo komt de app live op
-# https://jimmymiddendorp.github.io/JimmyMiddendorp/ zonder handmatige stappen.
+# Officiële GitHub Pages-flow: configure-pages zet Pages aan (build type
+# "workflow"), upload de map memento/ als artifact en deployt die.
+# App komt live op https://jimmymiddendorp.github.io/JimmyMiddendorp/
 
 on:
   push:
@@ -10,49 +10,34 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
   pages: write
+  id-token: write
 
 concurrency:
-  group: "memento-pages"
-  cancel-in-progress: true
+  group: "pages"
+  cancel-in-progress: false
 
 jobs:
-  publish:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Publish memento/ to gh-pages
-        uses: peaceiris/actions-gh-pages@v4
+      - name: Configure Pages (zet Pages aan)
+        uses: actions/configure-pages@v5
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./memento
-          publish_branch: gh-pages
-          force_orphan: true
-          commit_message: "Deploy MEMENTO app"
+          enablement: true
 
-      - name: Enable GitHub Pages (bron = gh-pages)
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          API="https://api.github.com/repos/${{ github.repository }}/pages"
-          body='{"source":{"branch":"gh-pages","path":"/"}}'
-          code=$(curl -s -o /tmp/post.json -w "%{http_code}" -X POST "$API" \
-            -H "Accept: application/vnd.github+json" \
-            -H "Authorization: Bearer $GH_TOKEN" \
-            -H "X-GitHub-Api-Version: 2022-11-28" \
-            -d "$body")
-          echo "POST /pages -> $code"; cat /tmp/post.json 2>/dev/null || true; echo
-          if [ "$code" != "201" ] && [ "$code" != "204" ]; then
-            code=$(curl -s -o /tmp/put.json -w "%{http_code}" -X PUT "$API" \
-              -H "Accept: application/vnd.github+json" \
-              -H "Authorization: Bearer $GH_TOKEN" \
-              -H "X-GitHub-Api-Version: 2022-11-28" \
-              -d "$body")
-            echo "PUT /pages -> $code"; cat /tmp/put.json 2>/dev/null || true; echo
-          fi
-          echo "Huidige Pages-status:"
-          curl -s "$API" -H "Accept: application/vnd.github+json" \
-            -H "Authorization: Bearer $GH_TOKEN" | tee /tmp/status.json; echo
+      - name: Upload app als Pages-artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./memento
+
+      - name: Deploy naar GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
