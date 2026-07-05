@@ -1,0 +1,6 @@
+# Cloudflare Pages configuratie voor de MEMENTO / MORI app.
+# Cloudflare serveert de map `memento/` als root van je domein,
+# zodat de app op https://<jouw-domein>.dev/ draait (niet /memento/).
+name = "memento-mori"
+pages_build_output_dir = "memento"
+compatibility_date = "2025-01-01"

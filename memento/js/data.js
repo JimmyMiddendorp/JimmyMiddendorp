@@ -93,14 +93,26 @@ const TASK_LIBRARY = {
   "lezen":         { title: "Lezen",            duration: 20, type: "small",   why: "20 minuten per dag = een ander mens per jaar." },
 };
 
-// bouw een dag op basis van prioriteiten
-function generateDayPath(priorities) {
+// leid een virtus-type af uit een gekozen duur
+function typeForDuration(min) {
+  if (min >= 90) return "deepwork90";
+  if (min >= 50) return "focus50";
+  if (min >= 25) return "focus25";
+  return "small";
+}
+
+// bouw een dag op basis van prioriteiten + eigen dagelijkse acties (habits)
+function generateDayPath(priorities, habits) {
   const tasks = [];
   tasks.push({ title: "Ochtendreflectie", duration: 5, type: "review", why: "Bepaal waarom vandaag telt.", tag: "reflectie" });
   const chosen = (priorities && priorities.length ? priorities : ["deep work", "fitness", "lezen"]).slice(0, 4);
   chosen.forEach((p) => {
     const t = TASK_LIBRARY[p] || TASK_LIBRARY["deep work"];
     tasks.push({ title: t.title, duration: t.duration, type: t.type, why: t.why, tag: p });
+  });
+  // eigen terugkerende acties
+  (habits || []).forEach((h) => {
+    tasks.push({ title: h.title, duration: h.duration, type: h.type || typeForDuration(h.duration), why: h.why || "Je koos deze actie zelf. Bewijs het.", tag: h.tag || "eigen actie", custom: true, habitId: h.id });
   });
   tasks.push({ title: "Avondreview", duration: 5, type: "review", why: "Sluit de dag. Leer ervan.", tag: "reflectie" });
   return tasks.map((t, i) => ({ id: "t" + Date.now() + "_" + i, ...t, completed: false }));
@@ -126,5 +138,5 @@ const FOCUS_DURATIONS = [
 window.DATA = {
   LIFE_WEEKS, LIFE_YEARS, VIRTUS, virtusForFocus, streakMultiplier,
   QUOTES, quoteForToday, DREAM_FIELDS, BLOCKERS, IDENTITY_TRAITS, PRIORITIES,
-  generateDayPath, REFLECT_MORNING, REFLECT_EVENING, FOCUS_DURATIONS,
+  generateDayPath, typeForDuration, REFLECT_MORNING, REFLECT_EVENING, FOCUS_DURATIONS,
 };

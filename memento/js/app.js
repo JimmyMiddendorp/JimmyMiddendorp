@@ -18,6 +18,9 @@ const I = {
   arrow:  `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M5 12h14M13 6l6 6-6 6"/></svg>`,
   back:   `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>`,
   pause:  `<svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><rect x="6" y="5" width="4" height="14"/><rect x="14" y="5" width="4" height="14"/></svg>`,
+  plus:   `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 5v14M5 12h14"/></svg>`,
+  trash:  `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13"/></svg>`,
+  x:      `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 6l12 12M18 6L6 18"/></svg>`,
 };
 Object.keys(I).forEach(k => { if (!/stroke-width/.test(I[k]) && /stroke="currentColor"/.test(I[k])) I[k] = I[k].replace(/<svg /, '<svg stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" '); });
 
@@ -31,6 +34,7 @@ function freshState() {
     lastActiveDate: null,
     lastDayGenerated: null,
     tasks: [],
+    habits: [],
     strongWeeks: [],
     focusSessions: [],
     history: {},
@@ -95,7 +99,7 @@ function ensureToday() {
   }
 
   // regenerate today's path
-  S.tasks = DATA.generateDayPath(S.user.priorities);
+  S.tasks = DATA.generateDayPath(S.user.priorities, S.habits);
   S.lastDayGenerated = today;
   save();
 }
@@ -329,7 +333,7 @@ function finishOnboarding() {
   S.user.wakeTime = onb.wakeTime;
   S.user.sleepTime = onb.sleepTime;
   S.onboarded = true;
-  S.tasks = DATA.generateDayPath(S.user.priorities);
+  S.tasks = DATA.generateDayPath(S.user.priorities, S.habits);
   S.lastDayGenerated = todayStr();
   onb = null;
   save();
@@ -379,8 +383,10 @@ function viewHome() {
       <div class="fc-play">${I.play}</div>
     </div>` : `<div class="card center muted" style="margin-top:20px">Alles voltooid. MORI ademt rustig uit.</div>`}
 
-    <div class="section-title"><h3>Day Path</h3><span class="meta">${done}/${total}</span></div>
+    <div class="section-title"><h3>Day Path</h3>
+      <button class="add-link" data-action="add-action-open">${I.plus} Actie</button></div>
     <div id="task-list">${S.tasks.map(taskRow).join("")}</div>
+    <div class="meta muted" style="text-align:center;font-size:.78rem;margin-top:6px">${done}/${total} voltooid · voeg je eigen dagelijkse acties toe</div>
 
     <div class="section-title"><h3>Reflectie</h3></div>
     <div class="row">
@@ -395,19 +401,21 @@ function viewHome() {
 
 function taskRow(t) {
   const isReflect = t.tag === "reflectie";
+  const actionBtn = isReflect
+    ? `<button class="task-act" data-nav="${t.title.toLowerCase().includes("ochtend") ? "reflect-morning" : "reflect-evening"}" title="Reflecteer">${I.arrow}</button>`
+    : `<button class="task-act" data-focus-task="${t.id}" title="Start focus">${I.play}</button>`;
+  const delBtn = t.custom ? `<button class="task-act del" data-del-task="${t.id}" title="Verwijder">${I.trash}</button>` : "";
   return `
     <div class="task ${t.completed ? "done" : ""}" data-task="${t.id}">
       <button class="task-check" data-toggle-task="${t.id}">${I.check}</button>
       <div class="task-main">
-        <div class="task-title">${esc(t.title)}</div>
+        <div class="task-title">${esc(t.title)} ${t.custom ? `<span class="custom-badge">${t.habitId ? "dagelijks" : "vandaag"}</span>` : ""}</div>
         <div class="task-sub">
-          <span class="pill">⏱ ${t.duration} min</span>
-          ${t.tag ? `<span class="pill">◆ ${esc(t.tag)}</span>` : ""}
+          <span>⏱ ${t.duration} min</span>
+          ${t.tag ? `<span>◆ ${esc(t.tag)}</span>` : ""}
         </div>
       </div>
-      ${isReflect
-        ? `<button class="task-focus" data-nav="${t.title.toLowerCase().includes("ochtend") ? "reflect-morning" : "reflect-evening"}" title="Reflecteer">${I.arrow}</button>`
-        : `<button class="task-focus" data-focus-task="${t.id}" title="Start focus">${I.play}</button>`}
+      ${actionBtn}${delBtn}
     </div>`;
 }
 
@@ -425,7 +433,7 @@ function progressRing(pct, size) {
   const r = size / 2 - 5, c = 2 * Math.PI * r, off = c * (1 - pct / 100);
   return `<svg width="${size}" height="${size}" style="transform:rotate(-90deg)">
     <circle cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="var(--line)" stroke-width="5"/>
-    <circle cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="var(--ink)" stroke-width="5"
+    <circle cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="var(--text)" stroke-width="5"
       stroke-linecap="round" stroke-dasharray="${c}" stroke-dashoffset="${off}" style="transition:stroke-dashoffset .6s var(--ease)"/>
   </svg>`;
 }
@@ -607,6 +615,17 @@ function viewSettings() {
         </select></div>
     </div>
 
+    <div class="section-title"><h3>Mijn dagelijkse acties</h3>
+      <button class="add-link" data-action="add-action-open">${I.plus} Nieuw</button></div>
+    <div class="card">
+      <p class="muted" style="font-size:.85rem;margin-bottom:${S.habits.length ? "12px" : "0"}">Terugkerende acties die elke dag automatisch in je Day Path verschijnen. Je 3 prioriteiten uit de onboarding staan er al standaard in — dit zijn je eigen extra's.</p>
+      ${S.habits.length ? S.habits.map(h => `
+        <div class="habit-row">
+          <div class="h-main"><div class="h-title">${esc(h.title)}</div><div class="h-sub">${h.duration} min · ${esc(h.tag || "eigen actie")}</div></div>
+          <button class="icon-btn" data-del-habit="${h.id}" title="Verwijder">${I.trash}</button>
+        </div>`).join("") : `<p class="muted" style="font-size:.85rem;margin-top:6px">Nog geen eigen acties. Voeg er een toe met <b>Nieuw</b>.</p>`}
+    </div>
+
     <div class="section-title"><h3>Jouw droom</h3></div>
     <div class="card">
       <p class="muted" style="font-size:.85rem;margin-bottom:10px">Je bouwt naar dit toe. Herlees het als je twijfelt.</p>
@@ -755,6 +774,68 @@ function completeFocus() {
 }
 
 /* ============================================================
+   ADD ACTION (eigen dagelijkse acties)
+   ============================================================ */
+let addForm = null;
+
+function openAddAction() {
+  addForm = { duration: 25, repeat: false };
+  const m = document.createElement("div");
+  m.className = "modal-backdrop";
+  m.id = "add-modal";
+  m.innerHTML = `
+    <div class="modal" role="dialog" aria-label="Actie toevoegen">
+      <h3>Eigen actie toevoegen</h3>
+      <p class="modal-sub">Wat wil je vandaag — of elke dag — doen? Dit komt in je Day Path.</p>
+      <div class="field"><label>Wat ga je doen?</label>
+        <input type="text" id="add-title" placeholder="bv. Mediteren, Wandelen, Journalen" autocomplete="off"></div>
+      <div class="field"><label>Hoelang</label>
+        <div class="dur-chips">
+          ${[10,15,25,45,50,90].map(d => `<button type="button" class="chip ${d===25?"on":""}" data-add-dur="${d}">${d} min</button>`).join("")}
+        </div>
+      </div>
+      <div class="repeat-row">
+        <div><div class="lbl" style="font-weight:600">Elke dag herhalen</div>
+          <div class="desc muted" style="font-size:.82rem">Zet 'm vast als dagelijkse actie</div></div>
+        <div class="switch" id="add-repeat" data-action="add-toggle-repeat"></div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn ghost grow" data-action="add-action-cancel">Annuleer</button>
+        <button class="btn grow" data-action="add-action-save">Toevoegen</button>
+      </div>
+    </div>`;
+  document.body.appendChild(m);
+  m.addEventListener("click", (e) => { if (e.target === m) closeAddAction(); });
+  setTimeout(() => { const i = document.getElementById("add-title"); if (i) i.focus(); }, 60);
+}
+
+function closeAddAction() {
+  const m = document.getElementById("add-modal");
+  if (m) m.remove();
+  addForm = null;
+}
+
+function saveAddAction() {
+  const title = (document.getElementById("add-title").value || "").trim();
+  if (!title) { toast("Geef je actie een naam."); return; }
+  const dur = addForm.duration;
+  const repeat = addForm.repeat;
+  const type = DATA.typeForDuration(dur);
+  const base = { title, duration: dur, type, why: "Je koos deze actie zelf. Bewijs het.", tag: "eigen actie", custom: true, completed: false };
+  if (repeat) {
+    const habit = { id: "h" + Date.now(), title, duration: dur, type, tag: "eigen actie" };
+    S.habits.push(habit);
+    base.habitId = habit.id;
+  }
+  // voeg vandaag toe, net vóór de avondreview
+  S.tasks.splice(Math.max(0, S.tasks.length - 1), 0, Object.assign({ id: "t" + Date.now() }, base));
+  save();
+  closeAddAction();
+  toast(title + " toegevoegd" + (repeat ? " · elke dag" : ""));
+  render();
+}
+
+/* ============================================================
    EVENT HANDLING
    ============================================================ */
 function afterRender() {
@@ -771,6 +852,19 @@ document.addEventListener("click", (e) => {
 
   const tt = e.target.closest("[data-toggle-task]");
   if (tt) { toggleTask(tt.getAttribute("data-toggle-task")); return; }
+
+  const dtk = e.target.closest("[data-del-task]");
+  if (dtk) { delTask(dtk.getAttribute("data-del-task")); return; }
+
+  const dhb = e.target.closest("[data-del-habit]");
+  if (dhb) { delHabit(dhb.getAttribute("data-del-habit")); return; }
+
+  const adur = e.target.closest("[data-add-dur]");
+  if (adur && addForm) {
+    addForm.duration = parseInt(adur.getAttribute("data-add-dur"), 10);
+    document.querySelectorAll("[data-add-dur]").forEach(c => c.classList.toggle("on", c === adur));
+    return;
+  }
 
   const toggle = e.target.closest("[data-toggle]");
   if (toggle) { toggleChip(toggle); return; }
@@ -826,7 +920,32 @@ function handleAction(action, el, e) {
 
     case "export": exportData(); break;
     case "reset": resetAll(); break;
+
+    case "add-action-open": openAddAction(); break;
+    case "add-action-cancel": closeAddAction(); break;
+    case "add-action-save": saveAddAction(); break;
+    case "add-toggle-repeat":
+      if (addForm) { addForm.repeat = !addForm.repeat; el.classList.toggle("on", addForm.repeat); }
+      break;
   }
+}
+
+function delTask(id) {
+  const t = S.tasks.find(x => x.id === id);
+  S.tasks = S.tasks.filter(x => x.id !== id);
+  save();
+  toast((t ? t.title : "Actie") + " verwijderd");
+  render();
+}
+
+function delHabit(id) {
+  const h = S.habits.find(x => x.id === id);
+  S.habits = S.habits.filter(x => x.id !== id);
+  // verwijder ook de instantie van vandaag
+  S.tasks = S.tasks.filter(x => x.habitId !== id);
+  save();
+  toast((h ? h.title : "Actie") + " gestopt als dagelijkse actie");
+  render();
 }
 
 function toggleChip(el) {
@@ -937,4 +1056,8 @@ function virtusPop(amount, x, y) {
 }
 
 /* ---------- boot ---------- */
+// eerste keer: volg de systeemvoorkeur (licht blijft de default-signatuur)
+if (!localStorage.getItem(KEY) && window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) {
+  S.settings.theme = "dark";
+}
 render();

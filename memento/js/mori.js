@@ -1,243 +1,225 @@
 /* ============================================================
-   MORI — het karakter
-   7 marmeren evolutiefases, gerenderd als SVG.
-   Van ruwe steen (L1) naar onsterfelijk standbeeld (L7).
-   Alles grijswaarden: steen, marmer, schaduw.
+   MORI — het karakter, als handgetekende schets
+   7 evolutiefases, gerenderd als line-art studies van een
+   marmeren figuur. Houtskool/potlood-lijnen op papier,
+   arceringen voor schaduw, een subtiele hand-drawn wobble.
+   Kleur volgt currentColor -> past zich aan licht/donker aan.
    ============================================================ */
 
-const MORI_DEFS = `
-  <defs>
-    <linearGradient id="marble" x1="0" y1="0" x2="0.4" y2="1">
-      <stop offset="0" stop-color="#fbfbf9"/>
-      <stop offset="0.45" stop-color="#e7e6e1"/>
-      <stop offset="1" stop-color="#c3c2bd"/>
-    </linearGradient>
-    <linearGradient id="marbleDark" x1="0" y1="0" x2="0.4" y2="1">
-      <stop offset="0" stop-color="#d9d8d3"/>
-      <stop offset="1" stop-color="#a3a29c"/>
-    </linearGradient>
-    <linearGradient id="stone" x1="0" y1="0" x2="0.3" y2="1">
-      <stop offset="0" stop-color="#9a9992"/>
-      <stop offset="0.5" stop-color="#7c7b74"/>
-      <stop offset="1" stop-color="#57564f"/>
-    </linearGradient>
-    <radialGradient id="halo" cx="0.5" cy="0.4" r="0.6">
-      <stop offset="0" stop-color="#fff8e6" stop-opacity="0.9"/>
-      <stop offset="0.5" stop-color="#f0ead6" stop-opacity="0.35"/>
-      <stop offset="1" stop-color="#f0ead6" stop-opacity="0"/>
-    </radialGradient>
-    <linearGradient id="plinth" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#d0cfc9"/>
-      <stop offset="1" stop-color="#9c9b94"/>
-    </linearGradient>
-  </defs>`;
-
-function svg(inner) {
+/* --- helpers --- */
+function skWrap(inner) {
   return `<svg viewBox="0 0 300 400" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-    ${MORI_DEFS}${inner}</svg>`;
+    <defs>
+      <filter id="mSketch" x="-8%" y="-8%" width="116%" height="116%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.019" numOctaves="2" seed="7" result="n"/>
+        <feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/>
+      </filter>
+    </defs>
+    <g fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" filter="url(#mSketch)">
+      ${inner}
+    </g>
+  </svg>`;
 }
 
-// shared marble pedestal
-const PLINTH = `
-  <ellipse cx="150" cy="372" rx="96" ry="12" fill="rgba(0,0,0,.10)"/>
-  <rect x="70" y="352" width="160" height="24" rx="3" fill="url(#plinth)"/>
-  <rect x="60" y="366" width="180" height="12" rx="3" fill="#8a897f"/>`;
+// arceringen: n parallelle lijntjes
+function hatch(sx, sy, ex, ey, gx, gy, n, op) {
+  let s = `<g stroke-width="1" opacity="${op == null ? .3 : op}">`;
+  for (let i = 0; i < n; i++)
+    s += `<line x1="${(sx+gx*i).toFixed(1)}" y1="${(sy+gy*i).toFixed(1)}" x2="${(ex+gx*i).toFixed(1)}" y2="${(ey+gy*i).toFixed(1)}"/>`;
+  return s + `</g>`;
+}
 
-const CRACK = (d) => `<path d="${d}" stroke="#3f3e38" stroke-width="1.4" fill="none" stroke-linecap="round" opacity=".55"/>`;
+// stralende halo van korte lijntjes (L7)
+function halo(cx, cy, rIn, rOut, n) {
+  let s = `<g opacity=".32" stroke-width="1.2">`;
+  for (let i = 0; i < n; i++) {
+    const a = (i / n) * Math.PI * 2;
+    s += `<line x1="${(cx+Math.cos(a)*rIn).toFixed(1)}" y1="${(cy+Math.sin(a)*rIn).toFixed(1)}" x2="${(cx+Math.cos(a)*rOut).toFixed(1)}" y2="${(cy+Math.sin(a)*rOut).toFixed(1)}"/>`;
+  }
+  return s + `</g>`;
+}
+
+// geschetste sokkel
+const PLINTH = `
+  <g>
+    <path d="M74 356 L226 356"/>
+    <path d="M84 356 L84 372 M216 356 L216 372"/>
+    <path d="M74 372 L228 372"/>
+    ${hatch(90,359, 98,368, 20,0, 7, .28)}
+  </g>`;
+
+const eyes = (x1, x2, y) => `<path d="M${x1-2} ${y} l4 0 M${x2-2} ${y} l4 0" stroke-width="2.4"/>`;
 
 /* ---------- Level 1 — The Stone ---------- */
-function moriL1(cracks = 0) {
-  const extraCracks = cracks > 0
-    ? CRACK("M150 150 l14 40 -8 34") + CRACK("M120 210 l24 12")
-    : "";
-  return svg(`
+function moriL1() {
+  const body = "M96 348 C74 322 78 276 92 236 C102 210 90 176 116 150 C143 121 187 126 205 158 C217 180 214 210 219 240 C225 283 214 327 190 346 C166 360 118 362 96 348 Z";
+  return skWrap(`
     ${PLINTH}
-    <path d="M96 330
-             C70 300 74 250 92 210
-             C104 182 96 150 122 128
-             C150 104 184 110 200 140
-             C214 166 214 196 218 226
-             C224 268 216 312 190 332
-             C168 348 118 350 96 330 Z"
-          fill="url(#stone)"/>
-    <path d="M122 128 C150 104 184 110 200 140 C206 152 208 166 208 180
-             C180 170 150 176 128 190 C120 168 116 146 122 128 Z"
-          fill="#8f8e86" opacity=".6"/>
-    ${CRACK("M150 132 l-10 44 6 40 -12 40")}
-    ${CRACK("M176 150 l16 34")}
-    ${CRACK("M120 240 l40 6")}
-    ${extraCracks}
-    <ellipse cx="140" cy="200" rx="9" ry="12" fill="#4a4942" opacity=".35"/>
-    <ellipse cx="170" cy="204" rx="9" ry="12" fill="#4a4942" opacity=".35"/>`);
+    <path d="${body}" fill="currentColor" fill-opacity=".04" stroke="none"/>
+    <path d="${body}"/>
+    <path d="M150 152 C147 192 157 212 150 252 C146 288 150 314 147 342" stroke-width="1.4" opacity=".5"/>
+    <path d="M181 168 L197 208" stroke-width="1.4" opacity=".5"/>
+    <path d="M118 250 L157 258" stroke-width="1.4" opacity=".5"/>
+    ${hatch(150,300, 180,270, 6,6, 8, .3)}
+    ${hatch(120,246, 138,238, 4,7, 5, .24)}
+    <ellipse cx="140" cy="206" rx="8" ry="11" opacity=".4"/>
+    <ellipse cx="170" cy="210" rx="8" ry="11" opacity=".4"/>`);
 }
 
 /* ---------- Level 2 — The Shape ---------- */
 function moriL2() {
-  return svg(`
+  const body = "M104 348 C86 316 92 268 104 230 C90 206 98 172 120 152 C143 130 177 132 193 156 C209 180 204 210 196 230 C214 268 214 320 196 348 C176 360 124 360 104 348 Z";
+  return skWrap(`
     ${PLINTH}
-    <path d="M104 344 C86 312 90 262 104 224 C92 200 96 168 118 150
-             C140 132 172 134 190 154 C208 174 206 204 198 224
-             C214 260 214 312 196 344 C176 358 124 358 104 344 Z"
-          fill="url(#stone)"/>
-    <!-- emerging head -->
-    <ellipse cx="150" cy="150" rx="34" ry="40" fill="url(#marbleDark)"/>
-    <path d="M150 150 q-30 8 -30 60 q0 40 6 70 l48 0 q6 -30 6 -70 q0 -52 -30 -60 Z"
-          fill="url(#marbleDark)"/>
-    ${CRACK("M126 176 l-8 40")}
-    ${CRACK("M188 200 l10 40")}
-    <ellipse cx="138" cy="146" rx="5" ry="7" fill="#5c5b53" opacity=".5"/>
-    <ellipse cx="162" cy="146" rx="5" ry="7" fill="#5c5b53" opacity=".5"/>`);
+    <path d="${body}" fill="currentColor" fill-opacity=".04" stroke="none"/>
+    <path d="${body}"/>
+    <ellipse cx="150" cy="150" rx="30" ry="35"/>
+    <path d="M150 150 C130 158 123 184 127 208"/>
+    <path d="M173 150 C193 158 200 184 196 208"/>
+    <path d="M127 208 C132 250 133 306 137 344" opacity=".7"/>
+    <path d="M173 208 C168 250 167 306 163 344" opacity=".7"/>
+    ${hatch(158,250, 184,236, 5,6, 6, .26)}
+    <path d="M110 240 L150 250" stroke-width="1.4" opacity=".45"/>
+    ${eyes(140,160,148)}`);
 }
 
 /* ---------- Level 3 — The Disciplined One ---------- */
 function moriL3() {
-  return svg(`
+  return skWrap(`
     ${PLINTH}
-    <!-- rough shoulders remnants -->
-    <path d="M100 344 C92 300 98 270 108 250 L192 250 C202 270 208 300 200 344 Z"
-          fill="url(#stone)" opacity=".9"/>
-    <!-- torso -->
-    <path d="M118 250 C112 214 118 190 132 180 L168 180 C182 190 188 214 182 250
-             C176 300 176 330 172 344 L128 344 C124 330 124 300 118 250 Z"
-          fill="url(#marble)"/>
-    <!-- neck + head -->
-    <rect x="140" y="150" width="20" height="34" fill="url(#marbleDark)"/>
-    <ellipse cx="150" cy="132" rx="30" ry="36" fill="url(#marble)"/>
-    <path d="M120 132 q0 -34 30 -34 q30 0 30 34 q-6 -14 -30 -14 q-24 0 -30 14 Z" fill="#c9c8c2"/>
-    <!-- eyes -->
-    <ellipse cx="138" cy="132" rx="4" ry="5" fill="#57564f"/>
-    <ellipse cx="162" cy="132" rx="4" ry="5" fill="#57564f"/>
-    <path d="M150 138 l0 12" stroke="#a3a29c" stroke-width="2" fill="none"/>
-    <path d="M142 158 q8 6 16 0" stroke="#8f8e86" stroke-width="2" fill="none"/>
-    ${CRACK("M160 210 l6 40")}`);
+    <path d="M104 350 C98 306 104 274 116 254 C132 244 168 244 184 254 C196 274 202 306 196 350" fill="currentColor" fill-opacity=".04" stroke="none"/>
+    <path d="M104 350 C98 306 104 274 116 254"/>
+    <path d="M196 350 C202 306 196 274 184 254"/>
+    <path d="M116 254 C132 244 168 244 184 254"/>
+    <path d="M140 176 C139 186 139 194 138 202 M160 176 C161 186 161 194 162 202"/>
+    <path d="M138 202 C146 210 154 210 162 202"/>
+    <ellipse cx="150" cy="146" rx="29" ry="35"/>
+    <path d="M121 142 C123 108 177 108 179 142"/>
+    ${eyes(139,161,143)}
+    <path d="M150 146 l1 12" />
+    <path d="M143 168 q7 5 15 0"/>
+    ${hatch(166,208, 188,238, 5,7, 6, .26)}
+    ${hatch(118,300, 116,330, 0,8, 3, .22)}`);
 }
 
 /* ---------- Level 4 — The Warrior ---------- */
 function moriL4() {
-  return svg(`
+  return skWrap(`
     ${PLINTH}
-    <!-- cloak / stronger silhouette -->
-    <path d="M96 348 C88 300 96 250 116 224 L184 224 C204 250 212 300 204 348 Z"
-          fill="url(#marbleDark)"/>
-    <path d="M116 224 L184 224 L176 348 L124 348 Z" fill="url(#marble)"/>
-    <!-- chest lines (discipline) -->
-    <path d="M150 236 l0 96" stroke="#a3a29c" stroke-width="2"/>
-    <path d="M132 250 q18 12 36 0" stroke="#b6b5af" stroke-width="2" fill="none"/>
-    <!-- neck -->
-    <rect x="140" y="150" width="20" height="26" fill="url(#marbleDark)"/>
-    <ellipse cx="150" cy="128" rx="30" ry="36" fill="url(#marble)"/>
-    <!-- corinthian helmet -->
-    <path d="M118 128 C118 92 138 78 150 78 C162 78 182 92 182 128
-             C182 118 176 112 168 112 L168 132 L132 132 L132 112 C124 112 118 118 118 128 Z"
-          fill="url(#marbleDark)"/>
-    <path d="M150 74 C168 74 176 88 176 100 C158 92 142 92 124 100 C124 88 132 74 150 74 Z" fill="#b6b5af"/>
-    <!-- crest -->
-    <path d="M150 66 C150 52 160 44 176 46 C170 58 168 70 168 80 C160 74 154 70 150 66 Z" fill="#7c7b74"/>
-    <!-- eyes in shadow -->
-    <ellipse cx="139" cy="122" rx="4" ry="5" fill="#3f3e38"/>
-    <ellipse cx="161" cy="122" rx="4" ry="5" fill="#3f3e38"/>`);
+    <path d="M92 350 C86 300 96 250 116 224 C140 214 160 214 184 224 C204 250 214 300 208 350" fill="currentColor" fill-opacity=".05" stroke="none"/>
+    <path d="M92 350 C86 300 96 250 116 224"/>
+    <path d="M208 350 C214 300 204 250 184 224"/>
+    <path d="M116 224 C140 214 160 214 184 224"/>
+    <path d="M150 232 L150 338"/>
+    <path d="M132 250 q18 10 36 0"/>
+    ${hatch(118,298, 114,336, 0,9, 3, .28)}
+    ${hatch(186,298, 190,336, 0,9, 3, .28)}
+    <path d="M140 176 L140 200 M160 176 L160 200"/>
+    <ellipse cx="150" cy="150" rx="29" ry="33"/>
+    <path d="M119 150 C117 104 139 84 150 84 C161 84 183 104 181 150"/>
+    <path d="M133 150 L133 118 M167 150 L167 118"/>
+    <path d="M133 118 C141 108 159 108 167 118"/>
+    <path d="M150 120 L150 150"/>
+    <path d="M150 84 C150 60 167 48 187 53 C177 67 173 83 173 97"/>
+    ${hatch(154,60, 178,72, 4,5, 4, .3)}
+    ${eyes(139,161,139)}`);
 }
 
 /* ---------- Level 5 — The Philosopher ---------- */
 function moriL5() {
-  return svg(`
+  return skWrap(`
     ${PLINTH}
-    <!-- draped robe, calm stance -->
-    <path d="M104 348 C100 300 104 252 124 220 L176 220 C196 252 200 300 196 348 Z"
-          fill="url(#marble)"/>
-    <path d="M124 220 q26 20 52 0 l-6 128 -40 0 Z" fill="url(#marbleDark)" opacity=".7"/>
-    <path d="M120 260 q30 16 60 0" stroke="#b6b5af" stroke-width="2" fill="none"/>
-    <path d="M116 300 q34 18 68 0" stroke="#b6b5af" stroke-width="2" fill="none"/>
-    <!-- arm holding scroll -->
-    <path d="M176 232 q26 6 30 40" stroke="url(#marbleDark)" stroke-width="16" fill="none" stroke-linecap="round"/>
-    <rect x="196" y="266" width="30" height="12" rx="6" fill="#e7e6e1" stroke="#a3a29c"/>
-    <line x1="200" y1="272" x2="222" y2="272" stroke="#9a9992" stroke-width="1"/>
-    <!-- head -->
-    <rect x="140" y="150" width="20" height="24" fill="url(#marbleDark)"/>
-    <ellipse cx="150" cy="128" rx="29" ry="35" fill="url(#marble)"/>
-    <!-- philosopher hair/beard -->
-    <path d="M121 126 q2 -32 29 -32 q27 0 29 32 q-6 -16 -29 -16 q-23 0 -29 16 Z" fill="#c9c8c2"/>
-    <path d="M132 150 q18 26 36 0 q-4 22 -18 24 q-14 -2 -18 -24 Z" fill="#d3d2cc"/>
-    <ellipse cx="139" cy="126" rx="3.5" ry="4.5" fill="#57564f"/>
-    <ellipse cx="161" cy="126" rx="3.5" ry="4.5" fill="#57564f"/>`);
+    <path d="M104 350 C100 300 104 252 124 220 C140 234 160 234 176 220 C196 252 200 300 196 350" fill="currentColor" fill-opacity=".05" stroke="none"/>
+    <path d="M104 350 C100 300 104 252 124 220"/>
+    <path d="M196 350 C200 300 196 252 176 220"/>
+    <path d="M124 220 C140 234 160 234 176 220"/>
+    <path d="M120 262 q30 14 60 0"/>
+    <path d="M116 302 q34 16 68 0"/>
+    <path d="M128 332 q22 9 44 0"/>
+    ${hatch(126,266, 120,300, -1,8, 4, .24)}
+    <path d="M176 238 q26 6 30 42"/>
+    <path d="M191 270 l35 0 M191 282 l35 0"/>
+    <path d="M191 270 q-6 6 0 12 M226 270 q6 6 0 12"/>
+    <path d="M140 176 L140 196 M160 176 L160 196"/>
+    <ellipse cx="150" cy="146" rx="29" ry="35"/>
+    <path d="M121 142 C123 106 177 106 179 142"/>
+    <path d="M132 164 q18 24 36 0 q-3 22 -18 25 q-15 -3 -18 -25 Z"/>
+    ${hatch(135,170, 165,170, 0,5, 4, .3)}
+    ${eyes(139,161,143)}`);
 }
 
-/* ---------- Level 6 — The Architect (naast tempel) ---------- */
+/* ---------- Level 6 — The Architect ---------- */
 function moriL6() {
-  return svg(`
+  return skWrap(`
     ${PLINTH}
-    <!-- temple behind, to the right -->
-    <g opacity=".92">
-      <polygon points="188,150 262,150 225,120" fill="url(#marbleDark)"/>
-      <rect x="188" y="150" width="74" height="8" fill="#c9c8c2"/>
-      <rect x="194" y="158" width="8" height="86" fill="url(#marble)"/>
-      <rect x="212" y="158" width="8" height="86" fill="url(#marbleDark)"/>
-      <rect x="230" y="158" width="8" height="86" fill="url(#marble)"/>
-      <rect x="248" y="158" width="8" height="86" fill="url(#marbleDark)"/>
-      <rect x="186" y="244" width="80" height="8" fill="#b6b5af"/>
+    <g opacity=".85">
+      <path d="M186 150 L262 150 L224 120 Z"/>
+      <path d="M186 158 L262 158"/>
+      <path d="M196 158 L196 244 M214 158 L214 244 M232 158 L232 244 M250 158 L250 244"/>
+      <path d="M184 244 L266 244"/>
+      <path d="M180 252 L270 252"/>
+      ${hatch(200,168, 200,240, 18,0, 3, .18)}
     </g>
-    <!-- figure -->
-    <path d="M74 348 C70 300 76 252 96 222 L146 222 C166 252 172 300 168 348 Z" fill="url(#marble)"/>
-    <path d="M96 222 q25 18 50 0 l-6 126 -38 0 Z" fill="url(#marbleDark)" opacity=".7"/>
-    <path d="M90 272 q31 16 62 0" stroke="#b6b5af" stroke-width="2" fill="none"/>
-    <!-- extended arm toward temple -->
-    <path d="M146 236 q34 -6 44 -78" stroke="url(#marbleDark)" stroke-width="15" fill="none" stroke-linecap="round"/>
-    <rect x="140" y="150" width="20" height="24" x2="0" transform="translate(-30,0)" fill="url(#marbleDark)"/>
-    <ellipse cx="121" cy="128" rx="28" ry="34" fill="url(#marble)"/>
-    <path d="M93 126 q2 -30 28 -30 q26 0 28 30 q-6 -14 -28 -14 q-22 0 -28 14 Z" fill="#c9c8c2"/>
-    <ellipse cx="111" cy="126" rx="3.5" ry="4.5" fill="#57564f"/>
-    <ellipse cx="131" cy="126" rx="3.5" ry="4.5" fill="#57564f"/>`);
+    <path d="M74 350 C70 300 76 252 96 222 C112 236 132 236 146 222 C166 252 172 300 168 350" fill="currentColor" fill-opacity=".05" stroke="none"/>
+    <path d="M74 350 C70 300 76 252 96 222"/>
+    <path d="M168 350 C172 300 166 252 146 222"/>
+    <path d="M96 222 C112 236 132 236 146 222"/>
+    <path d="M90 272 q31 14 62 0"/>
+    <path d="M86 312 q35 16 70 0"/>
+    <path d="M146 236 q34 -4 44 -80"/>
+    ${hatch(96,272, 92,306, -1,8, 3, .22)}
+    <path d="M111 176 L111 196 M131 176 L131 196"/>
+    <ellipse cx="121" cy="146" rx="28" ry="34"/>
+    <path d="M93 142 C95 110 147 110 149 142"/>
+    ${eyes(111,131,143)}`);
 }
 
 /* ---------- Level 7 — The Immortal Memory ---------- */
 function moriL7() {
-  return svg(`
-    <ellipse cx="150" cy="200" rx="150" ry="200" fill="url(#halo)"/>
+  return skWrap(`
+    ${halo(150, 118, 66, 82, 26)}
+    <circle cx="150" cy="118" r="60" opacity=".12"/>
+    <circle cx="150" cy="118" r="90" opacity=".08"/>
     ${PLINTH}
-    <!-- full statue, luminous marble -->
-    <path d="M108 350 C102 296 108 244 128 210 L172 210 C192 244 198 296 192 350 Z" fill="url(#marble)"/>
-    <path d="M128 210 q22 18 44 0 l-5 140 -34 0 Z" fill="url(#marbleDark)" opacity=".55"/>
-    <path d="M122 250 q28 16 56 0" stroke="#cfcec8" stroke-width="2" fill="none"/>
-    <path d="M118 296 q32 18 64 0" stroke="#cfcec8" stroke-width="2" fill="none"/>
-    <!-- both arms, calm -->
-    <path d="M128 224 q-24 20 -20 60" stroke="url(#marble)" stroke-width="16" fill="none" stroke-linecap="round"/>
-    <path d="M172 224 q24 20 20 60" stroke="url(#marble)" stroke-width="16" fill="none" stroke-linecap="round"/>
-    <!-- neck + head -->
-    <rect x="141" y="150" width="18" height="22" fill="url(#marbleDark)"/>
-    <ellipse cx="150" cy="128" rx="30" ry="36" fill="url(#marble)"/>
-    <path d="M120 126 q2 -34 30 -34 q28 0 30 34 q-8 -18 -30 -18 q-22 0 -30 18 Z" fill="#e2e1db"/>
-    <!-- laurel wreath -->
-    <path d="M122 108 q-14 -6 -18 4 q10 2 12 10 q-10 0 -12 10 q10 0 16 -4" fill="none" stroke="#b6b5af" stroke-width="3"/>
-    <path d="M178 108 q14 -6 18 4 q-10 2 -12 10 q10 0 12 10 q-10 0 -16 -4" fill="none" stroke="#b6b5af" stroke-width="3"/>
-    <ellipse cx="139" cy="126" rx="3.5" ry="5" fill="#6b6a63"/>
-    <ellipse cx="161" cy="126" rx="3.5" ry="5" fill="#6b6a63"/>
-    <path d="M142 150 q8 5 16 0" stroke="#a3a29c" stroke-width="2" fill="none"/>`);
+    <path d="M108 352 C102 298 108 246 128 212 C142 226 158 226 172 212 C192 246 198 298 192 352" fill="currentColor" fill-opacity=".05" stroke="none"/>
+    <path d="M108 352 C102 298 108 246 128 212"/>
+    <path d="M192 352 C198 298 192 246 172 212"/>
+    <path d="M128 212 C142 226 158 226 172 212"/>
+    <path d="M122 252 q28 14 56 0"/>
+    <path d="M118 296 q32 16 64 0"/>
+    <path d="M126 330 q24 10 48 0"/>
+    <path d="M128 226 q-24 18 -20 62"/>
+    <path d="M172 226 q24 18 20 62"/>
+    ${hatch(124,254, 120,288, -1,8, 3, .2)}
+    <path d="M141 176 L141 194 M159 176 L159 194"/>
+    <ellipse cx="150" cy="146" rx="30" ry="36"/>
+    <path d="M120 142 C122 108 178 108 180 142"/>
+    <path d="M120 116 q-16 -4 -20 8 q12 0 14 10 q-12 2 -12 12"/>
+    <path d="M180 116 q16 -4 20 8 q-12 0 -14 10 q12 2 12 12"/>
+    ${eyes(139,161,143)}
+    <path d="M142 166 q8 5 16 0"/>`);
 }
 
 const MORI_STAGES = [
-  { level: 1, name: "The Stone",           label: "Ongevormde potentie",      render: moriL1 },
-  { level: 2, name: "The Shape",           label: "De vorm verschijnt",        render: moriL2 },
-  { level: 3, name: "The Disciplined One", label: "Controle",                  render: moriL3 },
-  { level: 4, name: "The Warrior",         label: "Discipline",                render: moriL4 },
-  { level: 5, name: "The Philosopher",     label: "Wijsheid",                  render: moriL5 },
-  { level: 6, name: "The Architect",       label: "Je bouwt je leven",         render: moriL6 },
-  { level: 7, name: "The Immortal Memory", label: "Legacy",                    render: moriL7 },
+  { level: 1, name: "The Stone",           label: "Ongevormde potentie", render: moriL1 },
+  { level: 2, name: "The Shape",           label: "De vorm verschijnt",  render: moriL2 },
+  { level: 3, name: "The Disciplined One", label: "Controle",            render: moriL3 },
+  { level: 4, name: "The Warrior",         label: "Discipline",          render: moriL4 },
+  { level: 5, name: "The Philosopher",     label: "Wijsheid",            render: moriL5 },
+  { level: 6, name: "The Architect",       label: "Je bouwt je leven",   render: moriL6 },
+  { level: 7, name: "The Immortal Memory", label: "Legacy",              render: moriL7 },
 ];
 
-// Virtus thresholds to reach each level
 const MORI_THRESHOLDS = [0, 150, 400, 900, 1800, 3200, 5200];
 
 function moriLevelForVirtus(virtus) {
   let lvl = 1;
-  for (let i = 0; i < MORI_THRESHOLDS.length; i++) {
-    if (virtus >= MORI_THRESHOLDS[i]) lvl = i + 1;
-  }
+  for (let i = 0; i < MORI_THRESHOLDS.length; i++) if (virtus >= MORI_THRESHOLDS[i]) lvl = i + 1;
   return Math.min(lvl, 7);
 }
 
-function moriRender(level, cracks = 0) {
-  const stage = MORI_STAGES[Math.min(level, 7) - 1];
-  if (level === 1) return moriL1(cracks);
+function moriRender(level) {
+  const stage = MORI_STAGES[Math.min(Math.max(level, 1), 7) - 1];
   return stage.render();
 }
 
