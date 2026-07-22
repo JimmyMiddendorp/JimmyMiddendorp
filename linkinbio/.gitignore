@@ -1,0 +1,4 @@
+
+# Lokale wrangler dev secrets
+.dev.vars
+.wrangler/

@@ -1,0 +1,19 @@
+{
+  "name": "linkinbio",
+  "version": "1.0.0",
+  "description": "Link-in-bio page voor @jimmymiddendorp — Cloudflare Workers + D1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "db:init": "wrangler d1 execute linkinbio-db --file=./schema.sql",
+    "db:init:local": "wrangler d1 execute linkinbio-db --local --file=./schema.sql",
+    "db:seed": "wrangler d1 execute linkinbio-db --file=./seed.sql",
+    "db:seed:local": "wrangler d1 execute linkinbio-db --local --file=./seed.sql",
+    "cron:test": "curl \"http://localhost:8787/__scheduled?cron=0+7+*+*+1\""
+  },
+  "devDependencies": {
+    "wrangler": "^3.90.0"
+  }
+}

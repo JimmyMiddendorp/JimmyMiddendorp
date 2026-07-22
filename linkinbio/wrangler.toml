@@ -1,0 +1,40 @@
+# Cloudflare Workers configuratie voor de link-in-bio app.
+#
+# Deploy:
+#   1. npm install
+#   2. npx wrangler d1 create linkinbio-db      -> kopieer database_id hieronder
+#   3. npm run db:init                          -> maakt tabellen
+#   4. npm run db:seed                          -> vult profiel + voorbeeldlinks
+#   5. npx wrangler secret put DASHBOARD_PASSWORD
+#   6. npm run deploy
+
+name = "linkinbio"
+main = "src/index.js"
+compatibility_date = "2024-11-01"
+
+# ---------------------------------------------------------------------------
+# Scheduled automation — Prompt 03: "runs every Monday 9am"
+# Cloudflare cron draait in UTC. 09:00 Europe/Amsterdam = 07:00 UTC (zomertijd)
+# of 08:00 UTC (wintertijd). Onderstaande staat op 07:00 UTC (zomer).
+# Pas aan naar "0 8 * * 1" in de winter, of hou 07:00 aan als benadering.
+# ---------------------------------------------------------------------------
+[triggers]
+crons = ["0 7 * * 1"]
+
+# ---------------------------------------------------------------------------
+# D1 database binding.
+# De Worker (= de "service role") is het enige dat deze binding heeft.
+# Bezoekers praten alleen met de Worker, nooit rechtstreeks met de database.
+# Vul database_id in na `wrangler d1 create linkinbio-db`.
+# ---------------------------------------------------------------------------
+[[d1_databases]]
+binding = "DB"
+database_name = "linkinbio-db"
+database_id = "REPLACE_WITH_YOUR_DATABASE_ID"
+
+[vars]
+# Publieke, niet-geheime variabelen.
+PROFILE_HANDLE = "jimmymiddendorp"
+
+# DASHBOARD_PASSWORD wordt als secret gezet (niet hier!):
+#   npx wrangler secret put DASHBOARD_PASSWORD
