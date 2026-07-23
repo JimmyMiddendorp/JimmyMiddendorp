@@ -81,6 +81,22 @@ npx wrangler d1 execute linkinbio-db \
 Markeer een link als affiliate met `is_affiliate = 1` om per-bezoeker pinnen aan
 te zetten.
 
+## `standalone.html` — één bestand, overal te hosten
+
+`standalone.html` is de volledige pagina in **één zelfstandig bestand** (geen
+database of server nodig). Click-tellingen, het dashboard (knop "Statistieken
+bekijken") en het pinnen van een eerder-getikte affiliate link werken direct via
+de browser (`localStorage`, dus per apparaat). Handig om snel live te zetten:
+
+- **GitHub Pages** — zet het op de gepubliceerde branch; het staat dan op je
+  Pages-URL, bv. `.../linkinbio/standalone.html`.
+- **Netlify Drop** — sleep het bestand naar <https://app.netlify.com/drop>.
+- **Lokaal** — dubbelklik het bestand; het werkt offline.
+
+Let op: `localStorage` telt per bezoeker/apparaat. Voor globale statistieken over
+álle bezoekers (en de wekelijkse auto-sortering) gebruik je de Cloudflare-versie
+hierboven.
+
 ## Over de cron-tijd
 
 Cloudflare-cron draait in **UTC**. `0 7 * * 1` = 09:00 in Amsterdam tijdens

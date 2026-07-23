@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Jimmy Middendorp — @jimmymiddendorp</title>
+<style>
+  :root {
+    --bg: #0e1016;
+    --bg-glow: #1a2030;
+    --card: #171a22;
+    --card-hover: #1f2330;
+    --text: #f3f5f8;
+    --muted: #99a0ad;
+    --border: rgba(255,255,255,0.07);
+    --border-strong: rgba(255,255,255,0.14);
+    --accent: #7c9bff;
+    --accent-ink: #0e1016;
+    --accent-soft: rgba(124,155,255,0.14);
+    --good: #56d1a0;
+    --radius: 15px;
+    --shadow: 0 10px 34px rgba(0,0,0,0.42);
+  }
+  :root[data-theme="light"] {
+    --bg: #f4f5f9;
+    --bg-glow: #e5e9f6;
+    --card: #ffffff;
+    --card-hover: #f5f7fc;
+    --text: #14161d;
+    --muted: #5c626f;
+    --border: rgba(20,22,29,0.08);
+    --border-strong: rgba(20,22,29,0.16);
+    --accent: #3f5bd0;
+    --accent-ink: #ffffff;
+    --accent-soft: rgba(63,91,208,0.10);
+    --good: #1a9d6e;
+    --shadow: 0 10px 30px rgba(40,50,90,0.10);
+  }
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) {
+      --bg: #f4f5f9; --bg-glow: #e5e9f6; --card: #ffffff; --card-hover: #f5f7fc;
+      --text: #14161d; --muted: #5c626f; --border: rgba(20,22,29,0.08);
+      --border-strong: rgba(20,22,29,0.16); --accent: #3f5bd0; --accent-ink: #ffffff;
+      --accent-soft: rgba(63,91,208,0.10); --good: #1a9d6e; --shadow: 0 10px 30px rgba(40,50,90,0.10);
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: radial-gradient(1100px 560px at 50% -8%, var(--bg-glow) 0%, var(--bg) 58%);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex; justify-content: center;
+    padding: 44px 20px 60px;
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.5;
+  }
+  .wrap { width: 100%; max-width: 460px; }
+
+  /* Profile */
+  .profile { text-align: center; margin-bottom: 26px; }
+  .avatar {
+    width: 92px; height: 92px; border-radius: 50%;
+    margin: 0 auto 15px; display: flex; align-items: center; justify-content: center;
+    background: linear-gradient(140deg, var(--accent), #a678ff);
+    font-size: 30px; font-weight: 700; color: #fff; letter-spacing: .5px;
+    border: 2px solid var(--border-strong); box-shadow: var(--shadow);
+  }
+  .name { font-size: 22px; font-weight: 700; letter-spacing: -0.015em; }
+  .handle { color: var(--muted); font-size: 14.5px; margin-top: 2px; }
+  .bio { color: var(--muted); font-size: 14.5px; margin-top: 11px; max-width: 340px; margin-inline: auto; }
+
+  /* Links */
+  .links { display: flex; flex-direction: column; gap: 13px; margin-top: 26px; }
+  .link {
+    position: relative; display: flex; align-items: center; justify-content: center;
+    min-height: 60px; padding: 15px 46px;
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--radius); color: var(--text);
+    text-decoration: none; font-size: 16.5px; font-weight: 600; text-align: center;
+    cursor: pointer; box-shadow: var(--shadow);
+    transition: transform .13s ease, background .13s ease, border-color .13s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .link:hover { background: var(--card-hover); transform: translateY(-2px); }
+  .link:active { transform: translateY(0) scale(.99); }
+  .link:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+  .link.pinned { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent) inset, var(--shadow); }
+  .badge {
+    position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+    font-size: 10px; font-weight: 800; letter-spacing: .05em; text-transform: uppercase;
+    color: var(--accent); background: var(--accent-soft); padding: 4px 8px; border-radius: 999px;
+  }
+
+  /* Footer / stats toggle */
+  .foot { text-align: center; margin-top: 34px; display: flex; flex-direction: column; gap: 12px; align-items: center; }
+  .stats-btn {
+    background: none; border: 1px solid var(--border-strong); color: var(--muted);
+    font: inherit; font-size: 13px; font-weight: 600; padding: 8px 16px; border-radius: 999px; cursor: pointer;
+    transition: color .13s, border-color .13s;
+  }
+  .stats-btn:hover { color: var(--text); border-color: var(--accent); }
+  .tag { color: var(--muted); font-size: 12px; opacity: .8; }
+
+  /* Dashboard sheet */
+  .sheet-bg {
+    position: fixed; inset: 0; background: rgba(0,0,0,.5); backdrop-filter: blur(3px);
+    display: none; align-items: flex-end; justify-content: center; z-index: 20; padding: 0;
+  }
+  .sheet-bg.open { display: flex; }
+  .sheet {
+    width: 100%; max-width: 480px; background: var(--bg); border-top: 1px solid var(--border-strong);
+    border-radius: 20px 20px 0 0; padding: 22px 20px 30px; max-height: 82vh; overflow-y: auto;
+    box-shadow: 0 -12px 40px rgba(0,0,0,.4);
+  }
+  @media (min-width: 520px) {
+    .sheet-bg { align-items: center; }
+    .sheet { border-radius: 18px; border: 1px solid var(--border-strong); }
+  }
+  .sheet h2 { font-size: 18px; font-weight: 700; }
+  .sheet .sub { color: var(--muted); font-size: 13px; margin-top: 3px; }
+  .sheet-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 18px; }
+  .close { background: none; border: none; color: var(--muted); font-size: 26px; line-height: 1; cursor: pointer; padding: 0 4px; }
+  .close:hover { color: var(--text); }
+  .kpis { display: flex; gap: 10px; margin-bottom: 16px; }
+  .kpi { flex: 1; background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 13px 14px; }
+  .kpi .n { font-size: 24px; font-weight: 800; font-variant-numeric: tabular-nums; }
+  .kpi .l { color: var(--muted); font-size: 12px; margin-top: 1px; }
+  .drow { display: flex; align-items: center; gap: 12px; padding: 12px 2px; border-bottom: 1px solid var(--border); }
+  .drow:last-child { border-bottom: none; }
+  .drank { color: var(--muted); font-weight: 800; width: 20px; font-variant-numeric: tabular-nums; }
+  .dinfo { flex: 1; min-width: 0; }
+  .dtitle { font-weight: 600; font-size: 14.5px; }
+  .durl { color: var(--muted); font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .dclicks { font-weight: 800; font-size: 18px; font-variant-numeric: tabular-nums; }
+  .reset { background: none; border: none; color: var(--muted); font: inherit; font-size: 12px; text-decoration: underline; cursor: pointer; margin-top: 14px; }
+  .reset:hover { color: var(--text); }
+  @media (prefers-reduced-motion: reduce) { .link { transition: none; } }
+</style>
+</head>
+<body>
+<main class="wrap">
+  <div class="profile">
+    <div class="avatar">JM</div>
+    <div class="name">Jimmy Middendorp</div>
+    <div class="handle">@jimmymiddendorp</div>
+    <div class="bio">Personal branding voor experts — word de #1 in jouw vakgebied.</div>
+  </div>
+
+  <nav class="links" id="links"></nav>
+
+  <div class="foot">
+    <button class="stats-btn" id="statsBtn" aria-haspopup="dialog">Statistieken bekijken</button>
+    <span class="tag">@jimmymiddendorp</span>
+  </div>
+</main>
+
+<div class="sheet-bg" id="sheetBg" role="dialog" aria-modal="true" aria-label="Statistieken">
+  <div class="sheet">
+    <div class="sheet-head">
+      <div>
+        <h2>Dashboard</h2>
+        <p class="sub">Clicks op dit apparaat — hoogste eerst.</p>
+      </div>
+      <button class="close" id="closeBtn" aria-label="Sluiten">&times;</button>
+    </div>
+    <div class="kpis">
+      <div class="kpi"><div class="n" id="kTotal">0</div><div class="l">Totaal clicks</div></div>
+      <div class="kpi"><div class="n" id="kLinks">0</div><div class="l">Links</div></div>
+    </div>
+    <div id="dashRows"></div>
+    <button class="reset" id="resetBtn">Statistieken op dit apparaat wissen</button>
+  </div>
+</div>
+
+<script>
+(function () {
+  // --- Data: de links (title, url, position, affiliate) ------------------
+  var LINKS = [
+    { id: 1, title: "Werk met mij",          url: "https://persoonlijkmerk.nl/diensten.html",       position: 1, affiliate: 0 },
+    { id: 2, title: "Volg mij op LinkedIn",  url: "https://www.linkedin.com/in/jimmymiddendorp/",    position: 2, affiliate: 0 },
+    { id: 3, title: "Bekijk succesverhalen", url: "https://persoonlijkmerk.nl/succesverhalen.html",  position: 3, affiliate: 0 },
+    { id: 4, title: "Gratis merk-scan",      url: "https://persoonlijkmerk.nl/pricing.html",         position: 4, affiliate: 1 }
+  ];
+
+  var KEY = "jm_linkinbio_v1";
+
+  // --- Opslag (per apparaat): click_count + welke affiliate-links getikt --
+  function load() {
+    try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) { return {}; }
+  }
+  function save(s) { try { localStorage.setItem(KEY, JSON.stringify(s)); } catch (e) {} }
+  function clicksFor(s, id) { return (s.clicks && s.clicks[id]) || 0; }
+
+  var state = load();
+  if (!state.clicks) state.clicks = {};
+  if (!state.tappedAffiliate) state.tappedAffiliate = null;
+
+  // --- Volgorde: globaal op position; pin de eerder-getikte affiliate boven
+  function orderedLinks() {
+    var arr = LINKS.slice().sort(function (a, b) { return a.position - b.position; });
+    var pin = state.tappedAffiliate;
+    if (pin && arr.some(function (l) { return l.id === pin; })) {
+      arr.sort(function (a, b) { return (b.id === pin) - (a.id === pin); });
+    }
+    return arr;
+  }
+
+  // --- Render de knoppen -------------------------------------------------
+  function esc(t) { return String(t).replace(/[&<>"]/g, function (c) {
+    return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+
+  function renderLinks() {
+    var wrap = document.getElementById("links");
+    wrap.innerHTML = "";
+    orderedLinks().forEach(function (l) {
+      var pinned = state.tappedAffiliate === l.id;
+      var a = document.createElement("a");
+      a.className = "link" + (pinned ? " pinned" : "");
+      a.href = l.url;
+      a.target = "_blank";
+      a.rel = "noopener";
+      a.innerHTML = "<span>" + esc(l.title) + "</span>" +
+        (pinned ? '<span class="badge">Voor jou</span>' : "");
+      // Prompt 02: tel +1, dan pas doorsturen — de link opent sowieso (target=_blank),
+      // dus de redirect wordt niet vertraagd door het tellen.
+      a.addEventListener("click", function () {
+        state.clicks[l.id] = clicksFor(state, l.id) + 1;
+        if (l.affiliate) state.tappedAffiliate = l.id; // pin voor volgend bezoek
+        save(state);
+      });
+      wrap.appendChild(a);
+    });
+  }
+
+  // --- Dashboard (Prompt 02): alle links + clicks, hoogste eerst ---------
+  function renderDash() {
+    var rows = LINKS.slice().sort(function (a, b) {
+      return clicksFor(state, b.id) - clicksFor(state, a.id);
+    });
+    var total = LINKS.reduce(function (s, l) { return s + clicksFor(state, l.id); }, 0);
+    document.getElementById("kTotal").textContent = total;
+    document.getElementById("kLinks").textContent = LINKS.length;
+    var box = document.getElementById("dashRows");
+    box.innerHTML = "";
+    rows.forEach(function (l, i) {
+      var d = document.createElement("div");
+      d.className = "drow";
+      d.innerHTML =
+        '<div class="drank">' + (i + 1) + "</div>" +
+        '<div class="dinfo"><div class="dtitle">' + esc(l.title) +
+        (l.affiliate ? ' <span class="badge" style="position:static;transform:none;margin-left:6px">affiliate</span>' : "") +
+        '</div><div class="durl">' + esc(l.url) + "</div></div>" +
+        '<div class="dclicks">' + clicksFor(state, l.id) + "</div>";
+      box.appendChild(d);
+    });
+  }
+
+  // --- Sheet open/dicht --------------------------------------------------
+  var bg = document.getElementById("sheetBg");
+  function openSheet() { renderDash(); bg.classList.add("open"); }
+  function closeSheet() { bg.classList.remove("open"); }
+  document.getElementById("statsBtn").addEventListener("click", openSheet);
+  document.getElementById("closeBtn").addEventListener("click", closeSheet);
+  bg.addEventListener("click", function (e) { if (e.target === bg) closeSheet(); });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape") closeSheet(); });
+  document.getElementById("resetBtn").addEventListener("click", function () {
+    state = { clicks: {}, tappedAffiliate: null };
+    save(state); renderLinks(); renderDash();
+  });
+
+  renderLinks();
+})();
+</script>
+</body>
+</html>
