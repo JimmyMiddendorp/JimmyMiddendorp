@@ -1,0 +1,7 @@
+# Statische Worker-deploy van de MEMENTO-app (map memento/ als site-root).
+name = "memento-mori"
+compatibility_date = "2025-01-01"
+
+[assets]
+directory = "./memento"
+not_found_handling = "single-page-application"
