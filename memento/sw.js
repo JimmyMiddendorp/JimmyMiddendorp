@@ -1,7 +1,7 @@
 /* MEMENTO — service worker
    App-shell caching zodat de app offline werkt en snel opent.
    Verhoog CACHE bij elke release om oude bestanden te vervangen. */
-const CACHE = "memento-v2";
+const CACHE = "memento-v3";
 const SHELL = [
   "./",
   "./index.html",
@@ -9,7 +9,11 @@ const SHELL = [
   "./fonts/instrument-serif.woff2",
   "./css/style.css",
   "./js/data.js",
+  "./js/life.js",
+  "./js/voice.js",
+  "./js/insights.js",
   "./js/mori.js",
+  "./js/views.js",
   "./js/app.js",
   "./manifest.webmanifest",
   "./icons/icon-192.png",

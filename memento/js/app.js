@@ -39,7 +39,12 @@ function freshState() {
     focusSessions: [],
     history: {},
     reflections: {},
-    settings: { theme: "light", notifications: true, defaultFocus: 50 },
+    signals: {},
+    tracked: (window.LIFE ? LIFE.DEFAULT_TRACKED.slice() : ["energy","mood","sleep","move","revenue"]),
+    graceDays: [],
+    stageSeen: 0,
+    aiLast: null,
+    settings: { theme: "light", notifications: true, defaultFocus: 50, ai: { key: "", model: "claude-sonnet-5" } },
   };
 }
 
@@ -52,7 +57,15 @@ function load() {
   try {
     const raw = localStorage.getItem(KEY);
     if (!raw) return freshState();
-    return Object.assign(freshState(), JSON.parse(raw));
+    const fresh = freshState();
+    const saved = JSON.parse(raw);
+    const st = Object.assign(fresh, saved);
+    st.settings = Object.assign({ theme: "light", notifications: true, defaultFocus: 50 }, saved.settings || {});
+    st.settings.ai = Object.assign({ key: "", model: "claude-sonnet-5" }, (saved.settings && saved.settings.ai) || {});
+    if (!st.signals) st.signals = {};
+    if (!Array.isArray(st.graceDays)) st.graceDays = [];
+    if (!Array.isArray(st.tracked) || !st.tracked.length) st.tracked = LIFE.DEFAULT_TRACKED.slice();
+    return st;
   } catch (e) { return freshState(); }
 }
 function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
@@ -91,11 +104,15 @@ function ensureToday() {
     const done = S.tasks.filter(t => t.completed).length;
     const total = S.tasks.length || 1;
     const focusMin = S.focusSessions.filter(f => f.date === S.lastDayGenerated).reduce((a, f) => a + f.minutes, 0);
-    S.history[S.lastDayGenerated] = { completed: done, total, focusMinutes: focusMin };
+    const prev = S.history[S.lastDayGenerated] || {};
+    S.history[S.lastDayGenerated] = Object.assign({}, prev, { completed: done, total, focusMinutes: focusMin });
 
-    // missed-day streak reset
+    // Gemiste dag: één genadedag per week houdt je reeks heel (geen streak-angst).
     const gap = daysBetween(S.lastActiveDate || S.lastDayGenerated, today);
-    if (S.lastActiveDate && gap > 1) S.streak = 0;
+    if (S.lastActiveDate && gap > 1) {
+      if (gap === 2 && graceAvailable()) useGrace(today);
+      else S.streak = 0;
+    }
   }
 
   // regenerate today's path
@@ -119,6 +136,7 @@ function registerActivity() {
   if (S.lastActiveDate === today) return;
   const gap = S.lastActiveDate ? daysBetween(S.lastActiveDate, today) : null;
   if (gap === 1 || gap === null) S.streak += 1;
+  else if (gap === 2 && graceAvailable()) { useGrace(today); S.streak += 1; }
   else if (gap > 1) S.streak = 1;
   S.lastActiveDate = today;
   if (S.streak > S.bestStreak) S.bestStreak = S.streak;
@@ -160,6 +178,9 @@ function render() {
     case "timeline":  inner = viewTimeline(); break;
     case "analytics": inner = viewAnalytics(); break;
     case "settings":  inner = viewSettings(); break;
+    case "total":     inner = viewTotal(); break;
+    case "path":      inner = viewPath(); break;
+    case "mirror":    inner = viewMirror(); break;
     case "reflect-morning": inner = viewReflect("morning"); break;
     case "reflect-evening": inner = viewReflect("evening"); break;
     default: inner = viewHome();
@@ -180,9 +201,9 @@ function bottomNav() {
     `<a href="#" data-nav="${r}" class="${route === r ? "active" : ""}">${icon}<span>${label}</span></a>`;
   return `<nav class="bottom-nav">
     ${item("home", I.home, "Vandaag")}
+    ${item("total", I.grid, "Totaal")}
     ${item("mori", I.mori, "MORI")}
-    ${item("timeline", I.grid, "Leven")}
-    ${item("analytics", I.chart, "Inzicht")}
+    ${item("mirror", I.chart, "Spiegel")}
     ${item("settings", I.gear, "Meer")}
   </nav>`;
 }
@@ -366,6 +387,8 @@ function viewHome() {
       <div class="stat"><div class="v serif">${fmtHrs(focusWeek)}</div><div class="l">Focus/week</div></div>
     </div>
 
+    ${stageCardHTML()}
+
     <div class="card" style="display:flex;align-items:center;gap:16px">
       <div class="ring-wrap">${progressRing(pct, 64)}<div class="pct">${pct}%</div></div>
       <div class="grow">
@@ -388,10 +411,21 @@ function viewHome() {
     <div id="task-list">${S.tasks.map(taskRow).join("")}</div>
     <div class="meta muted" style="text-align:center;font-size:.78rem;margin-top:6px">${done}/${total} voltooid · voeg je eigen dagelijkse acties toe</div>
 
-    <div class="section-title"><h3>Reflectie</h3></div>
-    <div class="row">
+    <div class="section-title"><h3>Reflectie</h3><span class="meta">typen of inspreken</span></div>
+    <button class="voice-cta" data-nav="${new Date().getHours() < 15 ? 'reflect-morning' : 'reflect-evening'}">
+      <span class="vc-ico">${VI.mic}</span>
+      <span class="vc-main"><span class="vc-t">Spreek je reflectie in</span>
+        <span class="vc-s">In het Nederlands · dertig seconden is genoeg</span></span>
+    </button>
+    <div class="row" style="margin-top:10px">
       <button class="btn ghost grow" data-nav="reflect-morning">Ochtend</button>
       <button class="btn ghost grow" data-nav="reflect-evening">Avond</button>
+    </div>
+
+    <div class="section-title"><h3>Dagcheck</h3><span class="meta" data-nav="total" style="cursor:pointer">Totaalbeeld →</span></div>
+    <div class="card dagcheck-nudge" data-nav="total">
+      <div><b>${Object.keys((S.signals && S.signals[todayStr()]) || {}).length}</b> van ${(S.tracked || []).length} signalen ingevuld vandaag</div>
+      <div class="muted" style="font-size:.85rem">Tien seconden. Zo ziet MEMENTO je hele leven, niet alleen je taken.</div>
     </div>
 
     <div class="section-title"><h3>Je leven in weken</h3><span class="meta" data-nav="timeline" style="cursor:pointer">Bekijk →</span></div>
@@ -575,25 +609,6 @@ function viewAnalytics() {
 /* ============================================================
    REFLECTION
    ============================================================ */
-function viewReflect(when) {
-  const qs = when === "morning" ? DATA.REFLECT_MORNING : DATA.REFLECT_EVENING;
-  const today = todayStr();
-  const saved = (S.reflections[today] && S.reflections[today][when]) || [];
-  const title = when === "morning" ? "Ochtendreflectie" : "Avondreflectie";
-  const intro = when === "morning" ? "Bepaal je dag voordat hij jou bepaalt." : "Sluit de dag. Leer ervan.";
-  return `
-    <button class="link-btn" data-nav="home">${I.back} Terug</button>
-    <p class="eyebrow" style="margin-top:10px">${when === "morning" ? "Ochtend" : "Avond"}</p>
-    <h2 class="serif" style="font-size:1.9rem;margin:4px 0 4px">${title}</h2>
-    <p class="muted" style="margin-bottom:20px">${intro}</p>
-    ${qs.map((q, i) => `
-      <div class="reflect-q">
-        <div class="q serif">${q}</div>
-        <textarea data-reflect="${i}" placeholder="Schrijf kort en eerlijk…">${esc(saved[i] || "")}</textarea>
-      </div>`).join("")}
-    <button class="btn full" data-action="save-reflect" data-when="${when}">Bewaar reflectie · +${DATA.VIRTUS.review} Virtus</button>
-  `;
-}
 
 /* ============================================================
    SETTINGS
@@ -635,6 +650,33 @@ function viewSettings() {
       <hr class="divider">
       <p><b>Word:</b> ${u.identity.map(t => `<span class="tag">${t}</span>`).join(" ") || "—"}</p>
       <p style="margin-top:8px"><b>Focus op:</b> ${u.priorities.map(t => `<span class="tag">${t}</span>`).join(" ") || "—"}</p>
+    </div>
+
+    <div class="section-title"><h3>Wat je dagelijks bijhoudt</h3></div>
+    <div class="card">
+      <p class="muted" style="font-size:.85rem;margin-bottom:12px">Kies je signalen. Hoe minder je aanvinkt, hoe groter de kans dat je het volhoudt.</p>
+      ${["personal","business"].map(g => `
+        <div class="track-group"><div class="tg-label">${g === "personal" ? "Persoonlijk" : "Zakelijk"}</div>
+        ${LIFE.SIGNALS.filter(s => s.group === g).map(s => `
+          <label class="track-row">
+            <input type="checkbox" data-track="${s.key}" ${(S.tracked || []).includes(s.key) ? "checked" : ""}>
+            <span>${s.label}</span><span class="tr-u">${s.unit || "1-5"}</span>
+          </label>`).join("")}</div>`).join("")}
+    </div>
+
+    <div class="section-title"><h3>Claude als mentor</h3></div>
+    <div class="card">
+      <p class="muted" style="font-size:.85rem;margin-bottom:12px">
+        Optioneel. Zonder sleutel werkt de Spiegel gewoon met je eigen patronen.
+        Met je eigen Claude-sleutel denkt Claude in het Nederlands met je mee over je dromen, gedrag en reflecties.
+        De sleutel blijft in dit apparaat staan; je data gaat alleen naar Anthropic op het moment dat jij op <i>Vraag Claude</i> tikt.
+      </p>
+      <input type="password" class="txt-input" data-ai-key placeholder="sk-ant-…" value="${esc(S.settings.ai.key || "")}" autocomplete="off">
+      <select class="txt-input" data-ai-model style="margin-top:10px">
+        ${[["claude-sonnet-5","Sonnet 5 · snel en scherp"],["claude-opus-5","Opus 5 · diepste analyse"],["claude-haiku-4-5-20251001","Haiku 4.5 · snelst en goedkoopst"]]
+          .map(m => `<option value="${m[0]}" ${S.settings.ai.model === m[0] ? "selected" : ""}>${m[1]}</option>`).join("")}
+      </select>
+      <p class="muted" style="font-size:.78rem;margin-top:10px">Sleutel maken kan op console.anthropic.com. Kosten lopen via je eigen account.</p>
     </div>
 
     <div class="section-title"><h3>Privacy & data</h3></div>
@@ -913,7 +955,8 @@ function handleAction(action, el, e) {
       stopFocus(false); render(); break;
     case "focus-finish": stopFocus(true); toast("+" + Math.round(DATA.virtusForFocus(1)) + " Virtus verdiend"); render(); break;
 
-    case "save-reflect": saveReflection(el.getAttribute("data-when")); break;
+    case "save-reflect": saveReflectionFull(el.getAttribute("data-when")); break;
+    case "ask-ai": askAI(); break;
 
     case "toggle-theme": S.settings.theme = S.settings.theme === "dark" ? "light" : "dark"; save(); render(); break;
     case "toggle-notif": S.settings.notifications = !S.settings.notifications; save(); render(); if (S.settings.notifications) requestNotify(); break;
@@ -975,33 +1018,17 @@ function toggleTask(id) {
       : t.type === "focus25" ? DATA.VIRTUS.focus25
       : t.type === "habit" ? DATA.VIRTUS.habit
       : DATA.VIRTUS.small;
+    noteTag(t.tag);
     const rect = document.querySelector(`[data-task="${id}"]`)?.getBoundingClientRect();
     awardVirtus(base, rect ? rect.right - 40 : null, rect ? rect.top : null);
     checkFullDay();
+    checkStageUp();
   }
   save();
   // update just the list + stats without full nav reset
   render();
 }
 
-function saveReflection(when) {
-  const qs = when === "morning" ? DATA.REFLECT_MORNING : DATA.REFLECT_EVENING;
-  const answers = [];
-  document.querySelectorAll("[data-reflect]").forEach(ta => { answers[parseInt(ta.getAttribute("data-reflect"),10)] = ta.value; });
-  const today = todayStr();
-  if (!S.reflections[today]) S.reflections[today] = {};
-  const already = !!S.reflections[today][when];
-  S.reflections[today][when] = answers;
-  // mark matching task complete
-  const taskName = when === "morning" ? "Ochtendreflectie" : "Avondreview";
-  const tk = S.tasks.find(t => t.title === taskName);
-  if (tk && !tk.completed) { tk.completed = true; registerActivity(); }
-  if (!already) { S.virtus += Math.round(DATA.VIRTUS.review * DATA.streakMultiplier(S.streak)); }
-  save();
-  checkFullDay();
-  toast("Reflectie bewaard. MORI schrijft een lijn op de boekrol.");
-  route = "home"; render();
-}
 
 /* ---------- Data ops ---------- */
 function exportData() {
