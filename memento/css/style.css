@@ -536,3 +536,13 @@ body.theme-dark .wk.lived  { background: var(--stone-600); }
   .mic-btn.rec { animation: none; box-shadow: 0 0 0 3px rgba(201,162,75,.35); }
   .dom-bar span, .stage-prog span { transition: none; }
 }
+
+/* ---------- data meenemen ---------- */
+.imp-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 4px; }
+.imp-col { background: var(--surface-2); border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 14px; }
+.imp-col.dim { opacity: .72; }
+.imp-h { font-size: .68rem; letter-spacing: .14em; text-transform: uppercase; color: var(--text-soft); font-weight: 600; margin-bottom: 10px; }
+.imp-l { display: flex; justify-content: space-between; gap: 8px; font-size: .8rem; padding: 3px 0; }
+.imp-l span { color: var(--text-soft); }
+.imp-l b { font-variant-numeric: tabular-nums; text-align: right; }
+@media (max-width: 430px) { .imp-cols { grid-template-columns: 1fr; } .modal-actions { flex-wrap: wrap; } }

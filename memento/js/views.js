@@ -482,3 +482,190 @@ function useGrace(day) {
   save();
   setTimeout(() => toast("Genadedag gebruikt — je reeks blijft staan. Eén dag missen is menselijk."), 900);
 }
+
+/* ============================================================
+   DATA MEENEMEN — export van je telefoon hier weer inladen
+   ============================================================ */
+let importPayload = null;
+
+function fileSummary(d) {
+  const dates = new Set();
+  const count = (obj) => { Object.keys(obj || {}).forEach(k => dates.add(k)); return Object.keys(obj || {}).length; };
+  const refl = count(d.reflections);
+  const sig = count(d.signals);
+  count(d.history);
+  const sorted = [...dates].sort();
+  return {
+    naam: (d.user && d.user.name) || "—",
+    virtus: d.virtus || 0,
+    streak: d.streak || 0,
+    refl, sig,
+    sessies: (d.focusSessions || []).length,
+    van: sorted[0] || null,
+    tot: sorted[sorted.length - 1] || null,
+  };
+}
+
+function handleImportFile(file) {
+  const reader = new FileReader();
+  reader.onerror = () => toast("Kon dit bestand niet lezen.");
+  reader.onload = () => {
+    let data;
+    try { data = JSON.parse(reader.result); }
+    catch (e) { toast("Dit is geen geldig MEMENTO-exportbestand."); return; }
+    if (!data || typeof data !== "object" || (data.virtus === undefined && !data.user)) {
+      toast("Dit bestand lijkt niet van MEMENTO te komen.");
+      return;
+    }
+    importPayload = data;
+    showImportModal(fileSummary(data));
+  };
+  reader.readAsText(file);
+}
+
+function showImportModal(sum) {
+  const here = fileSummary(S);
+  const m = document.createElement("div");
+  m.className = "modal-backdrop";
+  m.id = "import-modal";
+  m.innerHTML = `
+    <div class="modal" role="dialog" aria-label="Data importeren">
+      <h3>Data meenemen</h3>
+      <p class="modal-sub">Je bestand is gelezen. Kies wat er met de data op dit apparaat gebeurt.</p>
+      <div class="imp-cols">
+        <div class="imp-col">
+          <div class="imp-h">Uit het bestand</div>
+          <div class="imp-l"><span>Naam</span><b>${esc(sum.naam)}</b></div>
+          <div class="imp-l"><span>Virtus</span><b>${sum.virtus.toLocaleString("nl-NL")}</b></div>
+          <div class="imp-l"><span>Reflectiedagen</span><b>${sum.refl}</b></div>
+          <div class="imp-l"><span>Dagen signalen</span><b>${sum.sig}</b></div>
+          <div class="imp-l"><span>Focussessies</span><b>${sum.sessies}</b></div>
+          <div class="imp-l"><span>Periode</span><b>${sum.van ? sum.van + " → " + sum.tot : "—"}</b></div>
+        </div>
+        <div class="imp-col dim">
+          <div class="imp-h">Nu op dit apparaat</div>
+          <div class="imp-l"><span>Naam</span><b>${esc(here.naam)}</b></div>
+          <div class="imp-l"><span>Virtus</span><b>${here.virtus.toLocaleString("nl-NL")}</b></div>
+          <div class="imp-l"><span>Reflectiedagen</span><b>${here.refl}</b></div>
+          <div class="imp-l"><span>Dagen signalen</span><b>${here.sig}</b></div>
+          <div class="imp-l"><span>Focussessies</span><b>${here.sessies}</b></div>
+          <div class="imp-l"><span>Periode</span><b>${here.van ? here.van + " → " + here.tot : "—"}</b></div>
+        </div>
+      </div>
+      <p class="muted" style="font-size:.82rem;margin-top:14px">
+        <b>Samenvoegen</b> houdt beide: per dag wordt alles bij elkaar gelegd.
+        <b>Vervangen</b> gooit wat hier staat weg en zet het bestand ervoor in de plaats —
+        dat is wat je wilt als je overstapt naar een nieuw apparaat.
+      </p>
+      <div class="modal-actions">
+        <button class="btn ghost grow" data-action="import-cancel">Annuleer</button>
+        <button class="btn ghost grow" data-action="import-replace">Vervangen</button>
+        <button class="btn grow" data-action="import-merge">Samenvoegen</button>
+      </div>
+    </div>`;
+  document.body.appendChild(m);
+  m.addEventListener("click", (e) => { if (e.target === m) closeImport(); });
+}
+
+function closeImport() {
+  const m = document.getElementById("import-modal");
+  if (m) m.remove();
+  importPayload = null;
+  const f = document.getElementById("import-file");
+  if (f) f.value = "";
+}
+
+/* per datum samenvoegen; bij twijfel wint de hoogste/volste waarde */
+function mergeStates(local, inc) {
+  const out = Object.assign({}, local);
+
+  out.virtus = Math.max(local.virtus || 0, inc.virtus || 0);
+  out.streak = Math.max(local.streak || 0, inc.streak || 0);
+  out.bestStreak = Math.max(local.bestStreak || 0, inc.bestStreak || 0);
+  out.stageSeen = Math.max(local.stageSeen || 0, inc.stageSeen || 0);
+  out.lastActiveDate = [local.lastActiveDate, inc.lastActiveDate].filter(Boolean).sort().pop() || null;
+
+  // profiel: pak het ingevulde profiel als hier nog niets staat
+  if (!(local.user && local.user.name) && inc.user) out.user = inc.user;
+
+  // reflecties: per dag en per moment, niet-leeg wint
+  out.reflections = Object.assign({}, inc.reflections || {}, local.reflections || {});
+  Object.keys(inc.reflections || {}).forEach(dt => {
+    const a = (local.reflections || {})[dt] || {};
+    const b = inc.reflections[dt] || {};
+    const day = Object.assign({}, b, a);
+    ["morning", "evening"].forEach(w => {
+      const la = a[w], ib = b[w];
+      const filled = x => Array.isArray(x) && x.some(v => v && String(v).trim());
+      day[w] = filled(la) ? la : (filled(ib) ? ib : (la || ib));
+      if (!day[w]) delete day[w];
+    });
+    out.reflections[dt] = day;
+  });
+
+  // signalen: per dag velden samenvoegen, lokale waarde wint
+  out.signals = Object.assign({}, inc.signals || {});
+  Object.keys(local.signals || {}).forEach(dt => {
+    out.signals[dt] = Object.assign({}, inc.signals ? inc.signals[dt] : {}, local.signals[dt]);
+  });
+
+  // historie: hoogste telling per dag
+  out.history = Object.assign({}, inc.history || {});
+  Object.keys(local.history || {}).forEach(dt => {
+    const a = local.history[dt] || {}, b = (inc.history || {})[dt] || {};
+    const tags = Object.assign({}, b.tags || {});
+    Object.keys(a.tags || {}).forEach(t => tags[t] = Math.max(tags[t] || 0, a.tags[t]));
+    out.history[dt] = Object.assign({}, b, a, {
+      completed: Math.max(a.completed || 0, b.completed || 0),
+      total: Math.max(a.total || 0, b.total || 0),
+      focusMinutes: Math.max(a.focusMinutes || 0, b.focusMinutes || 0),
+      fullAwarded: !!(a.fullAwarded || b.fullAwarded),
+    });
+    if (Object.keys(tags).length) out.history[dt].tags = tags;
+  });
+
+  // focussessies: samenvoegen zonder dubbelen
+  const seen = new Set();
+  out.focusSessions = [].concat(local.focusSessions || [], inc.focusSessions || [])
+    .filter(f => { const k = JSON.stringify([f.date, f.minutes, f.taskTitle]); if (seen.has(k)) return false; seen.add(k); return true; });
+
+  // lijsten: vereniging
+  const uniq = a => [...new Set(a)];
+  out.strongWeeks = uniq([].concat(local.strongWeeks || [], inc.strongWeeks || []));
+  out.graceDays = uniq([].concat(local.graceDays || [], inc.graceDays || []));
+  out.tracked = uniq([].concat(local.tracked || [], inc.tracked || []));
+
+  const byTitle = new Map();
+  [].concat(inc.habits || [], local.habits || []).forEach(h => byTitle.set(h.title, h));
+  out.habits = [...byTitle.values()];
+
+  return out;
+}
+
+function applyImport(mode) {
+  if (!importPayload) return;
+  const inc = importPayload;
+  const merged = mode === "merge" ? mergeStates(S, inc) : Object.assign(freshState(), inc);
+
+  // instellingen van dit apparaat behouden (thema, API-sleutel)
+  merged.settings = Object.assign({}, merged.settings || {}, {
+    theme: S.settings.theme,
+    ai: S.settings.ai && S.settings.ai.key ? S.settings.ai : (merged.settings && merged.settings.ai) || { key: "", model: "claude-sonnet-5" },
+  });
+  // de dag van vandaag opnieuw laten opbouwen
+  merged.lastDayGenerated = null;
+  merged.onboarded = true;
+
+  S = merged;
+  save();
+  closeImport();
+  toast(mode === "merge" ? "Data samengevoegd. Alles staat er weer." : "Data overgezet. Welkom terug.");
+  route = "home";
+  render();
+}
+
+/* bestand gekozen voor import */
+document.addEventListener("change", (e) => {
+  const f = e.target.closest("#import-file");
+  if (f && f.files && f.files[0]) handleImportFile(f.files[0]);
+});

@@ -684,8 +684,13 @@ function viewSettings() {
       <p class="muted" style="font-size:.85rem;margin-bottom:12px">Je dromen en gedrag blijven op dit apparaat. Niets wordt verkocht.</p>
       <div class="row wrap">
         <button class="btn ghost" data-action="export">Exporteer data</button>
+        <button class="btn ghost" data-action="import">Importeer data</button>
         <button class="btn ghost" data-action="reset">Reset alles</button>
       </div>
+      <input type="file" id="import-file" accept="application/json,.json" hidden>
+      <p class="muted" style="font-size:.78rem;margin-top:12px">
+        Overstappen van telefoon naar computer? Exporteer hier, open MEMENTO op je computer en importeer dat bestand daar.
+      </p>
     </div>
     <p class="muted center" style="margin-top:24px;font-size:.8rem">MEMENTO · Remember you must live.</p>
   `;
@@ -962,6 +967,10 @@ function handleAction(action, el, e) {
     case "toggle-notif": S.settings.notifications = !S.settings.notifications; save(); render(); if (S.settings.notifications) requestNotify(); break;
 
     case "export": exportData(); break;
+    case "import": { const f = document.getElementById("import-file"); if (f) f.click(); break; }
+    case "import-cancel": closeImport(); break;
+    case "import-replace": applyImport("replace"); break;
+    case "import-merge": applyImport("merge"); break;
     case "reset": resetAll(); break;
 
     case "add-action-open": openAddAction(); break;
@@ -1035,7 +1044,7 @@ function exportData() {
   const blob = new Blob([JSON.stringify(S, null, 2)], { type: "application/json" });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
-  a.href = url; a.download = "memento-data.json"; a.click();
+  a.href = url; a.download = "memento-" + todayStr() + ".json"; a.click();
   URL.revokeObjectURL(url);
   toast("Data geëxporteerd.");
 }
